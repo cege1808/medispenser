@@ -7,5 +7,5 @@ def hello(request):
 
 
 def page(request):
-   text = """<h1>this is another page!</h1>"""
+   text = """<h1>this is another page! hi</h1>"""
    return HttpResponse(text)
