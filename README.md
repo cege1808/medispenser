@@ -27,7 +27,7 @@ Run at localhost:8000 by default
 if new modules are added, add them to the requirement.txt
 
 ## References
-https://www.tutorialspoint.com/django/index.html
+https://www.tutorialspoint.com/django/index.htm
 https://docs.djangoproject.com/en/2.0/
 https://docs.djangoproject.com/en/2.0/intro/
 
