@@ -32,7 +32,7 @@ Run at localhost:8000 by default
 
 
 ## References
-https://www.tutorialspoint.com/django/index.html
+https://www.tutorialspoint.com/django/index.htm
 
 https://docs.djangoproject.com/en/2.0/
 
