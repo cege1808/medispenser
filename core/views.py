@@ -56,27 +56,16 @@ class UserFormView(View):
 		return render(request, self.template_name, {'form': form})
 
 # User login form
-# def login_view(request):
-# 	print(request.user.is_authenticated)
-# 	form = LoginForm(request.POST or None)
-# 	if form.is_valid():
-# 		username = form.cleaned_data.get('username')
-# 		password = form.cleaned_data.get('password')
-# 		user = authenticate(username=username, password=password)
-# 		login(request, user)
-# 		print(request.user.is_authenticated)
-# 	return render(request, "login_form.html", {'form': form})
-
 def login_view(request):
 	print(request.user.is_authenticated)
 	form = LoginForm(request.POST or None)
-	if request.POST and form.is_valid():
-		user = form.login(request)
-		if user:
-			login(request, user)
-			return redirect('index')
-	return render(request, 'login_form.html', {'form': form })
-
+	if form.is_valid():
+		username = form.cleaned_data.get('username')
+		password = form.cleaned_data.get('password')
+		user = authenticate(username=username, password=password)
+		login(request, user)
+		print(request.user.is_authenticated)
+	return render(request, "login_form.html", {'form': form})
 
 
 

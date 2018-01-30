@@ -23,23 +23,6 @@ class UserForm(forms.ModelForm):
 
 
 # User login form
-# class LoginForm(forms.Form):
-#     username = forms.CharField()
-#     password = forms.CharField(widget=forms.PasswordInput)
-
-#     def clean(self, *args, **kwargs):
-#         username = self.cleaned_data.get("username")
-#         password = self.cleaned_data.get("password")
-#         if username and password:
-#             user = authenticate(username=username, password=password)
-#             if not user:
-#                 raise forms.ValidationError("User does not exist.")
-#             if not user.check_password(password):
-#             	raise forms.ValidationError("Incorrect password.")
-#             if not user.is_active:
-#                 raise forms.ValidationError("User is no longer active.")
-#         return super(LoginForm, self).clean(*args, **kwargs)
-
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=255, required=True)
     password = forms.CharField(widget=forms.PasswordInput, required=True)
@@ -47,12 +30,10 @@ class LoginForm(forms.Form):
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
-        user = authenticate(username=username)
-        print(user)
+        user = authenticate(username=username, password=password)
+        print("user: {}".format(user))
         if not user:
         	raise forms.ValidationError("Login invalid. Please try again.")
-        if not user.check_password(password):
-        	raise forms.ValidationError("Incorrect password. Please try again.")
         return self.cleaned_data
 
     def login(self, request):
