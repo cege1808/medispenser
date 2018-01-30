@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Registration{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block body %}
 <div class="container-fluid">
@@ -9,16 +9,25 @@
         <div class="col-sm-12 col-md-7">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h3>Create a New Account</h3>
+                    <h3>Login</h3>
 
                     <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% include 'form-template.html' %}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit class="btn btn-success">Submit</button>
+                                <button type="submit class="btn btn-success">Login</button>
                             </div>
                         </div>
+
+                        {% if form.non_field_errors %}
+                            <ul class='form-errors'>
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
                     </form>
                 </div>
             </div>
