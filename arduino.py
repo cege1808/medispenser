@@ -44,47 +44,75 @@ class Base():
     elif level == 'critical':
       self.logger.setLevel(logging.CRITICAL)
 
+class Serial(Base):
+
+  def __init__(self, *address):
+    Base.__init__(self)
+    self.set_addresses(address or None)
+    self.initialize_serial()
+
+  def set_addresses(self, *address):
+    common_addresses = ['tty.usbmodem1411', 'tty.usbmodem1421']
+    if address is not None:
+      self.addresses = common_addresses + [address]
+    else:
+      self.addresses = common_addresses
+
+  def initialize_serial(self):
+    for address in self.addresses:
+      try:
+        self.serial = serial.Serial("/dev/{}".format(address), 9600)
+        self.info("Successfully open port at /dev/{}".format(address))
+        time.sleep(2)
+        return
+      except:
+        self.debug("Failed to open port at /dev/{}".format(address))
+    self.info("Failed to any open port")
+
+  def write(self, char):
+    self.serial.write(char.encode())
+
+  def write_char(self, char):
+    self.write(char)
+
+  def write_line(self, message):
+    for char in message:
+      self.write_char(char)
+
+  def read(self, *num):
+    if num:
+      line = self.serial.read(num)
+    else:
+      line = self.serial.readline()
+    self.debug(line.strip())
+    return line.strip()
+
+  def flush(self):
+    self.serial.reset_input_buffer()
+    self.serial.reset_output_buffer()
+
+  def close(self):
+    self.serial.close()
+
 class Arduino(Base):
 
   def __init__(self, user_id):
     Base.__init__(self)
     self.setLogLevel('debug')
     self.user_id = user_id
-    self.pill_queue = []
+    self.instruction_queue = []
+    self.serial = Serial()
 
-  def initialize_serial(self):
-    addresses = ['tty.usbmodem1411', 'tty.usbmodem1421']
-    for address in addresses:
-      try:
-        self.serial = serial.Serial("/dev/{}".format(address), 9600)
-        self.debug("successfully open port at /dev/{}".format(address))
-        time.sleep(2)
-        return
-      except:
-        self.debug("failed to open port at /dev/{}".format(address))
-
-  def write_serial(self, char):
-    self.serial.write(char.encode())
-
-  def write_line(self, message):
-    for char in message:
-      self.write_serial(char)
-
-  def read_serial(self, *num):
-    if num:
-      line = self.serial.read(num)
-    else:
-      line = self.serial.readline()
-    self.debug(line.strip())
-    return line
+  def reset_instruction_queue(self):
+    self.instruction_queue = []
 
   def turn_on_led(self):
-    self.write_line('<LH>')
-    self.read_serial()
+    self.serial.write_line('<LH>')
+    self.serial.read()
 
   def turn_off_led(self):
-    self.write_line('<LL>')
-    self.read_serial()
+    self.serial.write_line('<LL>')
+    self.serial.read()
 
   def blink_led(self):
     self.debug("blink")
@@ -95,17 +123,19 @@ class Arduino(Base):
 
   def drop_pill(self):
     self.debug("rotate once from container")
+
+  def verify_pill(self):
     self.debug("check if pill has dropped")
 
-  def close_serial(self):
+  def pill_cycle(self):
+    self.drop_pill()
+    self.verify_pill()
+
+  def close(self):
     self.serial.close()
 
-  def flush(self):
-    self.serial.reset_input_buffer()
-    self.serial.reset_output_buffer()
 
 arduino = Arduino('1234')
-arduino.initialize_serial()
 arduino.blink_led()
-arduino.close_serial()
+arduino.close()
 
