@@ -11,7 +11,7 @@ def hello(request):
 	return render(request, "hello.html", {"name": "alex"})
 
 def index(request):
-  return render(request, "index.html")
+	return render(request, "home.html")
 
 def signup(request):
 	# template = loader.get_template('signup.html')
@@ -64,8 +64,14 @@ def login_view(request):
 		password = form.cleaned_data.get('password')
 		user = authenticate(username=username, password=password)
 		login(request, user)
+		return redirect('index')
 		print(request.user.is_authenticated)
 	return render(request, "login_form.html", {'form': form})
+
+# User logout
+def logout_view(request):
+	logout(request)
+	return redirect('index')
 
 
 
