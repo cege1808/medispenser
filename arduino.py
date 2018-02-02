@@ -122,6 +122,7 @@ class Arduino(Base):
     self.turn_off_led()
 
   def drop_pill(self):
+    self.serial.write_line('<D0>')
     self.debug("rotate once from container")
 
   def verify_pill(self):
@@ -136,6 +137,7 @@ class Arduino(Base):
 
 
 arduino = Arduino('1234')
-arduino.blink_led()
+# arduino.blink_led()
+arduino.drop_pill()
 arduino.close()
 

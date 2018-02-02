@@ -1,9 +1,9 @@
  typedef void (*footype)();
   // variables
-int motorPin1 = 3; // IN1
-int motorPin2 = 4; // IN2
-int motorPin3 = 5; // IN3
-int motorPin4 = 6; // IN4
+int motorPin1 = 2; // IN1
+int motorPin2 = 3; // IN2
+int motorPin3 = 4; // IN3
+int motorPin4 = 5; // IN4
 
 int motorSpeed= 2000;
 int count = 0; // count for steps made
@@ -21,7 +21,8 @@ Serial.begin(9600);
 }
 
 void loop() {
-  one_rotation(clockwise);
+//  one_rotation(clockwise);
+  clockwise();
 }
 
 void one_rotation(footype fcn){

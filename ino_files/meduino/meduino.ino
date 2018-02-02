@@ -101,11 +101,17 @@ void check_verification_instruction(){
   }
 }
 
+int convert_char_to_int(char c){
+  // Only for integers 0-9
+  return int(c) - 48;
+}
+
 
 void check_drop_instruction(){
   // Drop a pill with one rotation
   if(read_str[0] == 'D'){
-    int module_num = read_str[1];
+    char module_char = read_str[1];
+    int module_num = convert_char_to_int(module_char);
     one_cw_rotation(module_num);
   }
 }
