@@ -1,5 +1,17 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h1>Home page</h1>
+
+{% block header_links %}
+    {% if user.is_authenticated %}
+      <li><p>Hi {{ user.username }}!</p></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    {% else %}
+      <li><a href="{% url 'login' %}">Login</a></li>
+      <li><a href="{% url 'register' %}">Signup</a></li>
+    {% endif %}
+{% endblock %}
+
+
+{% block body %}
+<h1>Welcome to medispenser app!</h1>
 {% endblock %}

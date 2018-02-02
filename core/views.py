@@ -1,26 +1,19 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.contrib.auth import (authenticate, login, logout, get_user_model)
-from django.views.generic import View
-from .forms import UserForm
-from .forms import LoginForm
 from django import forms
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.views.generic import View
+
+from .forms import UserForm, LoginForm
 
 # Create your views here.
-def hello(request):
-	return render(request, "hello.html", {"name": "alex"})
-
 def index(request):
-	return render(request, "home.html")
-
-def signup(request):
-	# template = loader.get_template('signup.html')
-	return render(request, 'signup.html', {})
+	return render(request, "index.html")
 
 # User register form
 class UserFormView(View):
 	form_class = UserForm
-	template_name = 'registration_form.html'
+	template_name = 'registration.html'
 
 	# GET and POST built in functions
 
@@ -47,9 +40,7 @@ class UserFormView(View):
 			user = authenticate(username=username, password=password)
 
 			if user is not None:
-
 				if user.is_active:
-
 					login(request, user)
 					return redirect('index')
 
@@ -57,16 +48,18 @@ class UserFormView(View):
 
 # User login form
 def login_view(request):
-	print(request.user.is_authenticated)
 	form = LoginForm(request.POST or None)
+
 	if form.is_valid():
 		username = form.cleaned_data.get('username')
 		password = form.cleaned_data.get('password')
+
 		user = authenticate(username=username, password=password)
 		login(request, user)
 		return redirect('index')
-		print(request.user.is_authenticated)
-	return render(request, "login_form.html", {'form': form})
+
+	else:
+		return render(request, "login.html", {'form': form})
 
 # User logout
 def logout_view(request):
