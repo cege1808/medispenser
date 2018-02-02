@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import (authenticate, login, logout, get_user_model)
 from django import forms
+from .models import Profile
 
 # User Registration Form
-class UserForm(forms.ModelForm):
+class UserCreateForm(forms.ModelForm):
 	email2 = forms.EmailField(label='Confirm Email')
 	password = forms.CharField(widget=forms.PasswordInput)
 
@@ -21,6 +22,10 @@ class UserForm(forms.ModelForm):
 			raise forms.ValidationError("This email has already been registered")
 		return email
 
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name','last_name','username', 'email']
 
 # User login form
 class LoginForm(forms.Form):
@@ -41,5 +46,10 @@ class LoginForm(forms.Form):
         password = self.cleaned_data.get('password')
         user = authenticate(username=username, password=password)
         return user
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('phone_number',)
 
 

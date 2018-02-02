@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block header_links %}
+    <li><p>Hi {{ user.username }}!</p></li>
+    <li><a href="{% url 'logout' %}">Logout</a></li>
+{% endblock %}
+
+{% block body %}
+
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-7">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>Edit Profile</h3>
+
+                    <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <ul class='form-errors'>
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {% include 'form-element.html' %}
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit class="btn btn-success">Save Changes</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+{% endblock %}
