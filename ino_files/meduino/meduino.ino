@@ -1,8 +1,8 @@
 // String constants
 const char inbound_start_str = '<';
 const char inbound_end_str = '>';
-const char outbound_start_str = '{';
-const char outbound_end_str = '}';
+const char outbound_start_str = '[';
+const char outbound_end_str = ']';
 
 // Serial constants;
 const int baudrate = 9600;
@@ -47,9 +47,15 @@ void loop() {
       check_led_instruction();
       check_drop_instruction();
       check_verification_instruction();
-      Serial.println(construct_outbound_msg(read_str));
+      writeStringtoSerial(construct_outbound_msg(read_str));
       read_str = "";
     }
+  }
+}
+
+void writeStringtoSerial(String stringData) {
+  for (int i = 0; i < stringData.length(); i++) {
+    Serial.write(stringData[i]);   // Push each char 1 by 1 on each loop pass
   }
 }
 
