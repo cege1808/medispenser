@@ -1,53 +1,11 @@
 import time
 import serial
-import logging
-
-
-class Base():
-
-  def __init__(self):
-    self.logger = logging.getLogger(self.__class__.__name__)
-    self.logger.setLevel(logging.INFO)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
-    ch.setFormatter(formatter)
-    self.logger.addHandler(ch)
-
-  def logger(self):
-    return self.logger
-
-  def info(self, message):
-    self.logger.info(message)
-
-  def debug(self, message):
-    self.logger.debug(message)
-
-  def warn(self, message):
-    self.logger.warn(message)
-
-  def error(self, message):
-    self.logger.error(message)
-
-  def critical(self, message):
-    self.logger.critical(message)
-
-  def setLogLevel(self, level):
-    if level == 'info':
-      self.logger.setLevel(logging.INFO)
-    elif level == 'debug':
-      self.logger.setLevel(logging.DEBUG)
-    elif level == 'warn':
-      self.logger.setLevel(logging.WARN)
-    elif level == 'error':
-      self.logger.setLevel(logging.ERROR)
-    elif level == 'critical':
-      self.logger.setLevel(logging.CRITICAL)
+from base import Base
 
 class Serial(Base):
 
   def __init__(self, *address):
-    Base.__init__(self)
+    super().__init__()
     self.set_addresses(address or None)
     self.initialize_serial()
 
@@ -61,11 +19,11 @@ class Serial(Base):
   def initialize_serial(self):
     for address in self.addresses:
       try:
-        self.serial = serial.Serial("/dev/{}".format(address), 9600)
+        self.serial = serial.Serial("/dev/{}".format(address), 9600, timeout=0)
         self.info("Successfully open port at /dev/{}".format(address))
         time.sleep(2)
         return
-      except:
+      except serial.SerialException:
         self.debug("Failed to open port at /dev/{}".format(address))
     self.info("Failed to any open port")
 
@@ -91,28 +49,28 @@ class Serial(Base):
     self.serial.reset_input_buffer()
     self.serial.reset_output_buffer()
 
+  def is_open(self):
+    return self.serial.is_open
+
   def close(self):
     self.serial.close()
 
 class Arduino(Base):
 
-  def __init__(self, user_id):
-    Base.__init__(self)
+  def __init__(self):
+    super().__init__()
     self.setLogLevel('debug')
-    self.user_id = user_id
-    self.instruction_queue = []
     self.serial = Serial()
-
-  def reset_instruction_queue(self):
-    self.instruction_queue = []
 
   def turn_on_led(self):
     self.serial.write_line('<LH>')
-    self.serial.read()
+    expected_reply = '[LH]'
+    self.confirm_response(expected_reply)
 
   def turn_off_led(self):
     self.serial.write_line('<LL>')
-    self.serial.read()
+    expected_reply = '[LL]'
+    self.confirm_response(expected_reply)
 
   def blink_led(self):
     self.debug("blink")
@@ -121,23 +79,43 @@ class Arduino(Base):
     time.sleep(1)
     self.turn_off_led()
 
-  def drop_pill(self):
-    self.serial.write_line('<D0>')
+  def drop_pill(self, module_num):
+    instruction = '<D{}>'.format(module_num)
+    self.serial.write_line(instruction)
+    expected_reply = '[D{}]'.format(module_num)
+    self.confirm_response(expected_reply)
     self.debug("rotate once from container")
 
-  def verify_pill(self):
+  def verify_pill(self, module_num):
+    instruction = '<V{}>'.format(module_num)
+    self.serial.write_line(instruction)
+    expected_reply = '[V{}]'.format(module_num)
+    self.confirm_response(expected_reply)
     self.debug("check if pill has dropped")
 
-  def pill_cycle(self):
-    self.drop_pill()
-    self.verify_pill()
+  def pill_cycle(self, module_num):
+    self.drop_pill(module_num)
+    self.verify_pill(module_num)
+
+  def is_open(self):
+    return self.serial.is_open()
 
   def close(self):
     self.serial.close()
 
+  def confirm_response(self, expected_reply):
+    # assume that response is always true
+    # TODO edge cases when response is an int or false etc
+    wait = True
+    while wait:
+      read_line = self.serial.read().decode("utf-8")
+      self.debug('response: {}, expectation: {}'.format(read_line, expected_reply))
+      if read_line == expected_reply:
+        wait = False
+      time.sleep(1)
 
-arduino = Arduino('1234')
-# arduino.blink_led()
-arduino.drop_pill()
-arduino.close()
+if __name__ == '__main__':
+  Arduino()
+
+
 
