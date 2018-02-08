@@ -37,6 +37,9 @@ class TaskManager(Base):
   def serial_is_open(self):
     return self.arduino.is_open()
 
+  def instruction_interrupt(self, array_modules):
+     self.create_instruction(array_modules)
+
   def main_loop(self):
     while True:
       self.scheduler.run_pending()
