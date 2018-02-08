@@ -44,7 +44,7 @@ class TaskManager(Base):
         for module_num in self.instruction_queue[0]:
           self.arduino.pill_cycle(module_num)
         self.remove_nth_instruction(0)
-        self.arduino.turn_on_led()
+        self.arduino.blink_led()
 
       elif self.instruction_available():
         # TODO restart serial if not available
