@@ -38,7 +38,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   if(Serial.available() > 0){
     incoming_byte = Serial.read();
-    
+
     // get the complete instruction between '<' and '>'
     if(is_start_str(incoming_byte)){
       do {
@@ -58,7 +58,7 @@ void loop() {
 }
 
 
-// Initialize Functions 
+// Initialize Functions
 
 void initialize_pins(){
   for(int i=0; i < num_of_modules; i++){
@@ -116,6 +116,22 @@ String process_instruction(String instruction){
   else if(inbound_str[0] == 'V'){
     return run_verification_instruction(inbound_str);
   }
+  else if(inbound_str[0] == 'C'){
+    return run_calibration_instruction(inbound_str);
+  }
+}
+
+String run_calibration_instruction(String instruction){
+  // Move motor to calibrate to position 0
+  char module_char = instruction[1];
+  int module_num = convert_char_to_int(module_char);
+  int step_num_1 = convert_char_to_int(int(instruction[2]));
+  int step_num_2 = convert_char_to_int(int(instruction[3]));
+  int step_num_3 = convert_char_to_int(int(instruction[4]));
+  int step_num_combine = (step_num_1*100) + (step_num_2*10) + step_num_3;
+  int step_num = int(float(step_num_combine /360.0) * steps_in_one_rotation);
+  rotation(counterclockwise, module_num, step_num);
+  return instruction + 'Y';
 }
 
 String run_led_instruction(String instruction){
@@ -150,7 +166,7 @@ String run_prepare_drop_instruction(String instruction){
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
   int step_num = steps_in_one_rotation * 7 / 8;
-  rotation(clockwise, module_num, step_num);
+  rotation(counterclockwise, module_num, step_num);
   return instruction + 'Y';
 }
 
@@ -159,7 +175,7 @@ String run_repeat_prepare_drop_instruction(String instruction){
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
   int step_num = steps_in_one_rotation;
-  rotation(clockwise, module_num, step_num);
+  rotation(counterclockwise, module_num, step_num);
   return instruction + 'Y';
 }
 
@@ -168,7 +184,7 @@ String run_drop_instruction(String instruction){
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
   int step_num = steps_in_one_rotation / 8;
-  rotation(clockwise, module_num, step_num);
+  rotation(counterclockwise, module_num, step_num);
   return instruction + 'Y';
 }
 
@@ -181,14 +197,14 @@ void rotation(fcntype fcn, int module_num, int steps){
   }
 }
 
-void clockwise(int module_num){
+void counterclockwise(int module_num){
   for(int i = 7; i >= 0; i--){
     set_motor_output(module_num, i);
     delayMicroseconds(motor_speed);
   }
 }
 
-void counterclockwise(int module_num){
+void clockwise(int module_num){
   for(int i = 0; i < 8; i++){
     set_motor_output(module_num, i);
     delayMicroseconds(motor_speed);
