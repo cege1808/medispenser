@@ -53,7 +53,10 @@ class Serial(Base):
     return self.serial.is_open
 
   def close(self):
-    self.serial.close()
+    try:
+      self.serial.close()
+    except Exception:
+      self.debug("No serial to close")
 
 class Arduino(Base):
 
@@ -84,6 +87,12 @@ class Arduino(Base):
     self.turn_on_led()
     time.sleep(1)
     self.turn_off_led()
+
+  def calibrate_motor_pos(self, module_num, current_pos):
+    # current_position is num of degrees to the clockwise direction
+    instruction = '<C{}{}>'.format(module_num, current_pos)
+    self.serial.write_line(instruction)
+    return self.get_response(instruction)
 
   def prepare_drop_pill(self, module_num):
     instruction = '<P{}>'.format(module_num)
