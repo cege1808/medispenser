@@ -53,7 +53,10 @@ class Serial(Base):
     return self.serial.is_open
 
   def close(self):
-    self.serial.close()
+    try:
+      self.serial.close()
+    except Exception:
+      self.debug("No serial to close")
 
 class Arduino(Base):
 
@@ -62,15 +65,21 @@ class Arduino(Base):
     self.setLogLevel('debug')
     self.serial = Serial()
 
+  def is_open(self):
+    return self.serial.is_open()
+
+  def close(self):
+    self.serial.close()
+
   def turn_on_led(self):
-    self.serial.write_line('<LH>')
-    expected_reply = '[LH]'
-    self.confirm_response(expected_reply)
+    instruction = '<LH>'
+    self.serial.write_line(instruction)
+    return self.get_response(instruction)
 
   def turn_off_led(self):
-    self.serial.write_line('<LL>')
-    expected_reply = '[LL]'
-    self.confirm_response(expected_reply)
+    instruction = '<LL>'
+    self.serial.write_line(instruction)
+    return self.get_response(instruction)
 
   def blink_led(self):
     self.debug("blink")
@@ -79,40 +88,72 @@ class Arduino(Base):
     time.sleep(1)
     self.turn_off_led()
 
+  def calibrate_motor_pos(self, module_num, current_pos):
+    # current_position is num of degrees to the clockwise direction
+    instruction = '<C{}{}>'.format(module_num, current_pos)
+    self.serial.write_line(instruction)
+    return self.get_response(instruction)
+
+  def prepare_drop_pill(self, module_num):
+    instruction = '<P{}>'.format(module_num)
+    self.serial.write_line(instruction)
+    return self.get_response(instruction)
+
+  def repeat_prepare_drop_pill(self, module_num):
+    instruction = '<R{}>'.format(module_num)
+    self.serial.write_line(instruction)
+    return self.get_response(instruction)
+
   def drop_pill(self, module_num):
     instruction = '<D{}>'.format(module_num)
     self.serial.write_line(instruction)
-    expected_reply = '[D{}]'.format(module_num)
-    self.confirm_response(expected_reply)
-    self.debug("rotate once from container")
+    return self.get_response(instruction)
 
   def verify_pill(self, module_num):
     instruction = '<V{}>'.format(module_num)
     self.serial.write_line(instruction)
-    expected_reply = '[V{}]'.format(module_num)
-    self.confirm_response(expected_reply)
-    self.debug("check if pill has dropped")
+    return self.get_response(instruction)
 
   def pill_cycle(self, module_num):
-    self.drop_pill(module_num)
-    self.verify_pill(module_num)
+    if self.prepare_drop_pill(module_num):
+      self.debug('Pill is prepared')
 
-  def is_open(self):
-    return self.serial.is_open()
+      for i in range(5):
+        pill_status = self.verify_pill(module_num)
+        self.debug('Pill status: {}'.format(pill_status))
 
-  def close(self):
-    self.serial.close()
+        if pill_status:
+          self.drop_pill(module_num)
+          self.debug('Pill successfully dropped')
+          return
+        else:
+          self.info('Arduino did not verify pill, try again')
+          self.repeat_prepare_drop_pill(module_num)
+          self.debug('Pill is prepared (repeated)')
 
-  def confirm_response(self, expected_reply):
-    # assume that response is always true
-    # TODO edge cases when response is an int or false etc
+      self.info('Please refill module {}'.format(module_num))
+      return
+
+    else:
+      self.info('Arduino did not run instruction to prepare pill drop')
+
+  def get_response(self, req):
     wait = True
     while wait:
-      read_line = self.serial.read().decode("utf-8")
-      self.debug('response: {}, expectation: {}'.format(read_line, expected_reply))
-      if read_line == expected_reply:
+      res = self.serial.read().decode("utf-8")
+      self.debug('req: {}, res: {}'.format(req, res))
+      if self.verify_valid_response(req, res):
         wait = False
       time.sleep(1)
+    return (res[3] == 'Y')
+
+  def verify_valid_response(self, req, res):
+    if (len(res) > 0):
+      if (res[0] == '[') and (res[-1] == ']'):
+        if (res[1] == req[1]) and (res[2] == req[2]):
+          return True
+    return False
+
 
 if __name__ == '__main__':
   Arduino()
