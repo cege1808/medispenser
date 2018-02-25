@@ -1,6 +1,6 @@
 import sys
-from base import Base
-from arduino import Arduino
+from utilities.base import Base
+from utilities.arduino import Arduino
 
 
 class bash_colors:
@@ -55,11 +55,27 @@ class bash_colors:
 
 class MotorCalibration(Base):
 
-  def __init__(self):
+  def __init__(self, **kwargs):
     super().__init__()
     self.intro()
     self.arduino = Arduino()
-    self.module_num_input()
+    self.info(kwargs)
+    if 'current_position' in kwargs.keys():
+      module_num = kwargs['module_num']
+      self.pretty_print("  The current module num is {} ".format(module_num), bash_colors.fg.yellow)
+      self.current_module_num = module_num
+      pos = kwargs['current_position']
+      self.pretty_print("  The current shaft position is {} ".format(pos), bash_colors.fg.lightcyan)
+      self.current_pos = str(pos).zfill(3)
+      self.move_motor()
+    elif 'module_num' in kwargs.keys():
+      module_num = kwargs['module_num']
+      self.pretty_print("  The current module num is {} ".format(module_num), bash_colors.fg.yellow)
+      self.current_module_num = module_num
+      self.pos_input()
+    else:
+      self.module_num_input()
+
 
   def pretty_print(self, text, color):
     print(color + text + bash_colors.reset)
