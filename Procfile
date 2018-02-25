@@ -1,2 +1,2 @@
-web: daphne medispenser.asgi:application
-channelsworker: python manage.py runsworker -v2
+web: gunicorn medispenser.wsgi:application --log-file -
+web2: daphne medispenser.asgi:application --port 8000 --bind 0.0.0.0 -v2
