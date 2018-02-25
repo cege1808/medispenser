@@ -165,7 +165,7 @@ String run_prepare_drop_instruction(String instruction){
   // Prepare to drop a pill with 7/8 rotation
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
-  int step_num = steps_in_one_rotation * 7 / 8;
+  int step_num = (steps_in_one_rotation * 7) / 8;
   rotation(counterclockwise, module_num, step_num);
   return instruction + 'Y';
 }
@@ -174,7 +174,7 @@ String run_repeat_prepare_drop_instruction(String instruction){
   // Repeat prepare to drop a pill with one rotation
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
-  int step_num = steps_in_one_rotation;
+  int step_num = steps_in_one_rotation - 2;
   rotation(counterclockwise, module_num, step_num);
   return instruction + 'Y';
 }
@@ -197,14 +197,14 @@ void rotation(fcntype fcn, int module_num, int steps){
   }
 }
 
-void counterclockwise(int module_num){
+void clockwise(int module_num){
   for(int i = 7; i >= 0; i--){
     set_motor_output(module_num, i);
     delayMicroseconds(motor_speed);
   }
 }
 
-void clockwise(int module_num){
+void counterclockwise(int module_num){
   for(int i = 0; i < 8; i++){
     set_motor_output(module_num, i);
     delayMicroseconds(motor_speed);
