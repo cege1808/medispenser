@@ -1,1 +1,1 @@
-web: daphne medispenser.asgi:application --port 8000 --bind 0.0.0.0 -v2
+web: python3 manage.py runserver
