@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 from decouple import config, Csv
+import dj_database_url
+import urlparse
 
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -55,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'medispenser.urls'
@@ -81,7 +84,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'medispenser.wsgi.application'
 
 ##### Channels-specific settings
-
+# redis_url = urlparse.urlparse(os.environ.get('REDIS_URL'))
 redis_host = os.environ.get('REDIS_HOST', 'localhost')
 
 # Channel layer definitions
@@ -91,6 +94,7 @@ CHANNEL_LAYERS = {
         # This example app uses the Redis channel layer implementation channels_redis
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
+            # "hosts": [(redis_host, 6379)],
             "hosts": [(redis_host, 6379)],
         },
     },
@@ -113,6 +117,8 @@ DATABASES = {
     }
 }
 
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -156,3 +162,5 @@ STATICFILES_DIRS = [
 STATIC_URL = "/static/"
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
