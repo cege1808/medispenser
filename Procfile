@@ -1,2 +1,2 @@
 web: gunicorn medispenser.wsgi --log-file -
-web2: daphne -b 0.0.0.0 -p 6379 medispenser.asgi:application
+websock: daphne medispenser.asgi:application --port $PORT --bind 0.0.0.0 -v2
