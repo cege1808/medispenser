@@ -24,22 +24,34 @@ class EchoConsumer(AsyncConsumer):
         })
 
 
-class TaskManagerConsumer(JsonWebsocketConsumer):
+class TaskManagerConsumer(AsyncJsonWebsocketConsumer):
 
     groups = ['triggers']
 
-    def connect(self):
-        print("Someone connected")
-        self.accept()
+    async def connect(self):
+        print("Connection made")
+        await self.accept()
+        """
+        Called when the websocket is handshaking as part of initial connection.
+        """
+        # Are they logged in?
+        # if self.scope["user"].is_anonymous:
+        #     # Reject the connection
+        #     print("Reject connection")
+        #     await self.close()
+        # else:
+        #     # Accept the connection
+        #     print("Connection made")
+        #     await self.accept()
 
-    def receive_json(self, content):
+    async def receive_json(self, content):
         if content['path'] == '/demo/':
             module_nums = [ content['module'] ]
             self.manager = TaskManager()
             self.manager.run_instruction(module_nums)
             self.send_json({'message': "Successfully ran task manager"})
-        self.close()
+        await self.close()
 
 
-    def disconnect(self, close_code):
+    async def disconnect(self, close_code):
         print(close_code)

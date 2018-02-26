@@ -9,7 +9,12 @@ $(function(){
 
     colour_ws.onopen =  function(message){
       console.log(message);
-      colour_ws.send(JSON.stringify({'path': window.location.pathname, 'message': 'run module -client-', 'colour': colour, 'module': module}));
+      colour_ws.send(JSON.stringify({
+        'path': window.location.pathname,
+        'message': 'run module -client-',
+        'colour': colour,
+        'module': module
+      }));
     }
 
     colour_ws.onmessage = function(message){
