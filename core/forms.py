@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import (authenticate, login, logout, get_user_model)
 from django import forms
 from .models import Profile
+# from .models import Medication
 
 # User Registration Form
 class UserCreateForm(forms.ModelForm):
@@ -51,5 +52,13 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('phone_number',)
+
+class MedForm(forms.Form):
+    # class Meta:
+    #     model = Medication
+    #     fields = ['pill_name', 'module_num']
+    pill_name = forms.CharField(max_length=255)
+    module_num = forms.CharField(max_length=255)
+
 
 

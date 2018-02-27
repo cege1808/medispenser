@@ -18,3 +18,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+# class Medication(models.Model):
+# 	pill_name = models.CharField(max_length=255)
+# 	module_num = models.PositiveSmallIntegrerField()

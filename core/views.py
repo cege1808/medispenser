@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.contrib import messages
 
-from .forms import UserCreateForm, UserEditForm, LoginForm, ProfileForm
+from .forms import UserCreateForm, UserEditForm, LoginForm, ProfileForm, MedForm
 from .models import Profile
 
 # Create your views here.
@@ -94,6 +94,17 @@ def edit_profile(request):
 			user_form = UserEditForm(instance=request.user)
 			profile_form = ProfileForm(instance=request.user.profile)
 		return render(request, 'profile.html', {'form': [*user_form, *profile_form]})
+
+@login_required
+def med_info(request):
+	med_form = MedForm(request.POST or None)
+
+	# if request.method == 'POST':
+
+	return render(request, 'med_info.html', {'form': med_form})
+
+
+
 
 
 
