@@ -162,7 +162,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://')
+CELERY_RESULT_BACKEND = config('CELERY_BROKER_URL', default='redis://')
 CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
-
+CELERY_TASK_SERIALIZER='json'
 

@@ -1,9 +1,9 @@
 from channels.consumer import SyncConsumer, AsyncConsumer
 from channels.generic.websocket import WebsocketConsumer, AsyncJsonWebsocketConsumer, JsonWebsocketConsumer
 import json
-from channels.layers import get_channel_layer
+# from channels.layers import get_channel_layer
 from channels.worker import Worker
-from medispenser.celery import run_motor
+from medispenser._celery import run_motor, app
 
 class EchoConsumer(AsyncConsumer):
 
@@ -45,7 +45,6 @@ class TaskManagerConsumer(AsyncJsonWebsocketConsumer):
         if content['path'] == '/demo/':
             module_nums = [ content['module'] ]
             res = run_motor.delay(module_nums).get()
-            print(res)
             await self.send_json({'message': res })
         await self.close()
 

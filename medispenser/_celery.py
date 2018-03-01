@@ -23,7 +23,7 @@ def debug_task(self):
 
 @app.task(queue="run_motor")
 def run_motor(module_nums):
-  # manager = TaskManager()
-  # manager.run_instruction(module_nums)
+  manager = TaskManager()
+  manager.run_instruction(module_nums)
   return "Successfully drop pill {}".format(module_nums)
 
