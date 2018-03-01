@@ -44,7 +44,8 @@ class TaskManagerConsumer(AsyncJsonWebsocketConsumer):
     async def receive_json(self, content):
         if content['path'] == '/demo/':
             module_nums = [ content['module'] ]
-            res = run_motor.delay(module_nums).get()
+            # res = run_motor.delay(module_nums).get()
+            res = "hello world!!!"
             print(res)
             await self.send_json({'message': res })
         await self.close()
