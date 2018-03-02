@@ -22,3 +22,22 @@ def save_user_profile(sender, instance, **kwargs):
 # class Medication(models.Model):
 # 	pill_name = models.CharField(max_length=255)
 # 	module_num = models.PositiveSmallIntegrerField()
+
+class Medication(models.Model):
+	pill_name = models.CharField(max_length=255)
+	MODULE1 = '1'
+	MODULE2 = '2'
+	MODULE3 = '3'
+	MODULE_CHOICES = (
+		(MODULE1, 'Module 1'),
+		(MODULE2, 'Module 2'),
+		(MODULE3, 'Module 3'),
+		)
+	module_num = models.CharField(
+		max_length=1,
+		choices=MODULE_CHOICES,
+		default=MODULE1,
+		)
+
+# class Schedule(models.Model):
+
