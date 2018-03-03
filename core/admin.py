@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Profile
+from .models import User, Profile, Module, Scheduler
 
 # Register your models here.
 # admin.site.register(Profile)
@@ -24,3 +24,5 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(Module)
+admin.site.register(Scheduler)
