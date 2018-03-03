@@ -6,7 +6,7 @@ from django.db import transaction
 from django.contrib import messages
 
 from .forms import UserCreateForm, UserEditForm, LoginForm, ProfileForm, MedForm, ScheduleForm
-from .models import Profile
+from .models import Profile, Medication, Schedule
 
 # Create your views here.
 def index(request):
@@ -97,15 +97,34 @@ def edit_profile(request):
 
 @login_required
 def med_info(request):
-	med_form = MedForm(request.POST or None)
-
-	# if request.method == 'POST':
+	if request.method == 'POST':
+		med_form = MedForm(request.POST or None)
+		if med_form.is_valid():
+			pill_name = request.POST.get('pill_name', '')
+			module_num = request.POST.get('module_num', '')
+			medication_obj = Medication(pill_name=pill_name, module_num=module_num)
+			medication_obj.save()
+			return redirect('profile/medication')
+	else:
+		med_form = MedForm()
 
 	return render(request, 'med_info.html', {'form': med_form})
 
 @login_required
 def schedule_view(request):
 	schedule_form = ScheduleForm(request.POST or None)
+
+	if request.method == 'POST':
+		form = ScheduleForm(request.POST or None)
+		if form.is_valid():
+			category = request.POST.get('category', '')
+			time = request.POST.get('time', '')
+			day = request.POST.get('day', '')
+			schedule_obj = Schedule(category=category, time=time, day=day)
+			schedule_obj.save()
+			return redirect('profile/schedule')
+	else:
+		form = ScheduleForm()
 
 
 	return render(request, 'med_schedule.html', {'form': schedule_form})
