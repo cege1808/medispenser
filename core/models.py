@@ -1,9 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, validate_comma_separated_integer_list
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-import datetime
 
 # Create your models here.
 class Profile(models.Model):
@@ -21,65 +20,36 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 class Medication(models.Model):
-	pill_name = models.CharField(max_length=255)
-	MODULE1 = '1'
-	MODULE2 = '2'
-	MODULE3 = '3'
-	MODULE_CHOICES = (
-		(MODULE1, 'Module 1'),
-		(MODULE2, 'Module 2'),
-		(MODULE3, 'Module 3'),
-		)
-	module_num = models.CharField(
-		max_length=1,
-		choices=MODULE_CHOICES,
-		default=MODULE1,
-		)
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  pill_name = models.CharField("Pill Name", max_length=200)
+  module_num = models.IntegerField("Module Number")
 
 class Schedule(models.Model):
-	# CONFIRM THESE CATEGORIES
-	SECOND = datetime.timedelta(seconds=1)
-	MINUTE = datetime.timedelta(minutes=1)
-	HOURLY = datetime.timedelta(hours=1)
-	DAILY = datetime.timedelta(days=1)
-	WEEKLY = datetime.timedelta(weeks=1)
-	MONTHLY = datetime.timedelta(weeks=4)
-	CATEGORY_CHOICES = (
-		(SECOND, 'Every Second'),
-		(MINUTE, 'Every Minute'),
-		(HOURLY, 'Hourly'),
-		(DAILY, 'Daily'),
-		(MONTHLY, 'Monthly'),
-		)
+  CATEGORY_CHOICES = (
+      ('week', 'Week'),
+      ('day', 'Day'),
+      ('hour', 'Hour'),
+      ('minute', 'Minute'),
+      ('second', 'Second'),
+      ('once', 'Once')
+    )
 
-	# CONFIRM THESE WORK
-	MONDAY = 'Monday'
-	TUESDAY = 'Tuesday'
-	WEDNESDAY = 'Wednesday'
-	THURSDAY = 'Thursday'
-	FRIDAY = 'Friday'
-	SATURDAY = 'Saturday'
-	SUNDAY = 'Sunday'
-	DAY_CHOICES = (
-		(MONDAY, 'Monday'),
-		(TUESDAY, 'Tuesday'),
-		(WEDNESDAY, 'Wednesday'),
-		(THURSDAY, 'Thursday'),
-		(FRIDAY, 'Friday'),
-		(SATURDAY, 'Saturday'),
-		(SUNDAY, 'Sunday'),
-		)
+  DAY_CHOICES = (
+      ('mon', 'Monday'),
+      ('tue', 'Tuesday'),
+      ('wed', 'Wednesday'),
+      ('thu', 'Thursday'),
+      ('fri', 'Friday'),
+      ('sat', 'Saturday'),
+      ('sun', 'Sunday')
+    )
 
-	category = models.CharField(
-		max_length=9,
-		choices=CATEGORY_CHOICES,
-		default=SECOND,
-		)
-	time = models.TimeField()
-	day = models.CharField(
-		max_length= 9,
-		choices = DAY_CHOICES,
-		default = MONDAY,
-		)
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  category = models.CharField(max_length=6, choices=CATEGORY_CHOICES)
+  day = models.CharField(max_length=3, choices=DAY_CHOICES, blank=True)
+  time_regex = RegexValidator(regex=r'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$', message='HH:MM format')
+  time = models.CharField(validators=[time_regex], max_length=5, blank=True)
+  counter = models.IntegerField(blank=True)
+  module_nums = models.CharField("Module Number(s)", validators=[validate_comma_separated_integer_list], max_length=250)
 
 

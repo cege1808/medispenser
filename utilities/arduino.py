@@ -1,6 +1,6 @@
 import time
 import serial
-from base import Base
+from utilities.base import Base
 
 class Serial(Base):
 

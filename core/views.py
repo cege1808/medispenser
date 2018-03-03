@@ -12,6 +12,9 @@ from .models import Profile, Medication, Schedule
 def index(request):
 	return render(request, "index.html")
 
+def demo(request):
+	return render(request, "demo.html")
+
 @transaction.atomic
 def create_user(request):
 

@@ -64,11 +64,13 @@ class MedForm(forms.ModelForm):
 class ScheduleForm(forms.ModelForm):
     class Meta:
         model = Schedule
-        fields = ['category', 'time', 'day']
+        fields = ['category', 'time', 'day', 'counter', 'module_nums']
         labels= {
             'category': 'Category',
             'time': 'Time',
-            'day': 'Day'
+            'day': 'Day',
+            'counter': 'Counter',
+            'module_nums': 'Module Nums',
         }
 
 

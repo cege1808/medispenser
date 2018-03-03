@@ -1,16 +1,29 @@
 import logging
 
+loggers = {}
 
 class Base():
 
   def __init__(self):
-    self.logger = logging.getLogger(self.__class__.__name__)
-    self.logger.setLevel(logging.INFO)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
-    ch.setFormatter(formatter)
-    self.logger.addHandler(ch)
+    self.logger = self.initialize_logger()
+
+  def initialize_logger(self):
+    global loggers
+    class_name = self.__class__.__name__
+
+    if loggers.get(class_name):
+      return loggers.get(class_name)
+    else:
+      logger = logging.getLogger(self.__class__.__name__)
+      logger.setLevel(logging.INFO)
+      ch = logging.StreamHandler()
+      ch.setLevel(logging.DEBUG)
+      formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
+      ch.setFormatter(formatter)
+      logger.addHandler(ch)
+      loggers.update({class_name: logger})
+      return logger
+
 
   def logger(self):
     return self.logger

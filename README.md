@@ -31,6 +31,14 @@ Create a .env file and copy the contents from .env.example and edit as needed
 Run at localhost:8000 by default
 
 
+## Run Redis Server
+`redis-server /usr/local/etc/redis.conf`
+
+
+## Run Celery Worker
+`celery worker -A medispenser -Q {queue_name}`
+
+
 ## References
 https://www.tutorialspoint.com/django/index.htm
 
