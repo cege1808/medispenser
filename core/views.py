@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.contrib import messages
 
-from .forms import UserCreateForm, UserEditForm, LoginForm, ProfileForm, MedForm
+from .forms import UserCreateForm, UserEditForm, LoginForm, ProfileForm, MedForm, ScheduleForm
 from .models import Profile
 
 # Create your views here.
@@ -102,6 +102,13 @@ def med_info(request):
 	# if request.method == 'POST':
 
 	return render(request, 'med_info.html', {'form': med_form})
+
+@login_required
+def schedule_view(request):
+	schedule_form = ScheduleForm(request.POST or None)
+
+
+	return render(request, 'med_schedule.html', {'form': schedule_form})
 
 
 

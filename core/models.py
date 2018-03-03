@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import datetime
 
 # Create your models here.
 class Profile(models.Model):
@@ -18,10 +19,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-
-# class Medication(models.Model):
-# 	pill_name = models.CharField(max_length=255)
-# 	module_num = models.PositiveSmallIntegrerField()
 
 class Medication(models.Model):
 	pill_name = models.CharField(max_length=255)
@@ -39,5 +36,49 @@ class Medication(models.Model):
 		default=MODULE1,
 		)
 
-# class Schedule(models.Model):
+class Schedule(models.Model):
+	# CONFIRM THESE CATEGORIES
+	SECOND = datetime.timedelta(seconds=1)
+	MINUTE = datetime.timedelta(minutes=1)
+	HOURLY = datetime.timedelta(hours=1)
+	DAILY = datetime.timedelta(days=1)
+	WEEKLY = datetime.timedelta(weeks=1)
+	MONTHLY = datetime.timedelta(weeks=4)
+	CATEGORY_CHOICES = (
+		(SECOND, 'Every Second'),
+		(MINUTE, 'Every Minute'),
+		(HOURLY, 'Hourly'),
+		(DAILY, 'Daily'),
+		(MONTHLY, 'Monthly'),
+		)
+
+	MONDAY = 'Monday'
+	TUESDAY = 'Tuesday'
+	WEDNESDAY = 'Wednesday'
+	THURSDAY = 'Thursday'
+	FRIDAY = 'Friday'
+	SATURDAY = 'Saturday'
+	SUNDAY = 'Sunday'
+	DAY_CHOICES = (
+		(MONDAY, 'Monday'),
+		(TUESDAY, 'Tuesday'),
+		(WEDNESDAY, 'Wednesday'),
+		(THURSDAY, 'Thursday'),
+		(FRIDAY, 'Friday'),
+		(SATURDAY, 'Saturday'),
+		(SUNDAY, 'Sunday'),
+		)
+
+	category = models.CharField(
+		max_length=9,
+		choices=CATEGORY_CHOICES,
+		default=SECOND,
+		)
+	time = models.TimeField()
+	day = models.CharField(
+		max_length= 9,
+		choices = DAY_CHOICES,
+		default = MONDAY,
+		)
+
 
