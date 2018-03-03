@@ -52,6 +52,7 @@ class Schedule(models.Model):
 		(MONTHLY, 'Monthly'),
 		)
 
+	# CONFIRM THESE WORK
 	MONDAY = 'Monday'
 	TUESDAY = 'Tuesday'
 	WEDNESDAY = 'Wednesday'
