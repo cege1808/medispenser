@@ -1,6 +1,6 @@
 import schedule
 import time
-from base import Base
+from utilities.base import Base
 
 class Scheduler(Base):
 

@@ -1,6 +1,6 @@
-from base import Base
-from arduino import Arduino
-from scheduler import Scheduler
+from utilities.base import Base
+from utilities.arduino import Arduino
+from utilities.scheduler import Scheduler
 
 class TaskManager(Base):
 
@@ -20,9 +20,9 @@ class TaskManager(Base):
     self.instruction_queue = []
     self.arduino = Arduino()
     self.scheduler = Scheduler(self.create_instruction)
-    # TODO self.db_dict = self.scheduler.query_db()
-    self.scheduler.setup(self.db_dict)
-    self.main_loop()
+
+  def setup_scheduler(self, db_dict):
+    self.scheduler.setup(db_dict)
 
   def create_instruction(self, array_modules):
     self.debug("append array modules: {}".format(array_modules))
@@ -40,6 +40,24 @@ class TaskManager(Base):
   def instruction_interrupt(self, array_modules):
      self.create_instruction(array_modules)
 
+  def run_instruction(self, array_modules):
+    self.create_instruction(array_modules)
+    for module_num in self.instruction_queue[0]:
+        self.arduino.pill_cycle(module_num)
+        self.remove_nth_instruction(0)
+        self.arduino.blink_led()
+    self.arduino.close()
+
+
+class ContinuousTaskManager(TaskManager):
+
+  def __init__(self):
+    super().__init__()
+    # TODO self.db_dict = self.scheduler.query_db()
+    db_dict = [{'category': 'second', 'day': None, 'time': None, 'counter': 10, 'module_nums': [0]}]
+    self.setup_scheduler(db_dict)
+    self.main_loop()
+
   def main_loop(self):
     while True:
       self.scheduler.run_pending()
@@ -53,6 +71,7 @@ class TaskManager(Base):
         # TODO restart serial if not available
         pass
 
+
 if __name__ == '__main__':
-  TaskManager()
+  ContinuousTaskManager()
 
