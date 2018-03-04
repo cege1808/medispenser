@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.contrib import messages
-from django.views.decorators.csrf import requires_csrf_token
+from django.views.decorators.csrf import requires_csrf_token, ensure_csrf_cookie
 from .forms import UserCreateForm, UserEditForm, LoginForm, ProfileForm, MedForm, ScheduleForm
 from .models import Profile, Medication, Schedule
 
@@ -15,7 +15,7 @@ def index(request):
 def demo(request):
 	return render(request, "demo.html")
 
-@requires_csrf_token
+@ensure_csrf_cookie
 @transaction.atomic
 def create_user(request):
 
@@ -49,7 +49,7 @@ def create_user(request):
 		return render(request, 'registration.html', {'form': [*user_form, *profile_form]})
 
 # User login form
-@requires_csrf_token
+@rensure_csrf_cookie
 def login_view(request):
 	form = LoginForm(request.POST or None)
 
@@ -70,7 +70,7 @@ def logout_view(request):
 	logout(request)
 	return redirect('index')
 
-@requires_csrf_token
+@ensure_csrf_cookie
 @login_required
 @transaction.atomic
 def edit_profile(request):
@@ -100,7 +100,7 @@ def edit_profile(request):
 			profile_form = ProfileForm(instance=request.user.profile)
 		return render(request, 'profile.html', {'form': [*user_form, *profile_form]})
 
-@requires_csrf_token
+@ensure_csrf_cookie
 @login_required
 def med_info(request):
 	if request.method == 'POST':
@@ -116,7 +116,7 @@ def med_info(request):
 
 	return render(request, 'med_info.html', {'form': med_form})
 
-@requires_csrf_token
+@ensure_csrf_cookie
 @login_required
 def schedule_view(request):
 	schedule_form = ScheduleForm(request.POST or None)
