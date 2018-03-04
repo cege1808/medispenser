@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import (authenticate, login, logout, get_user_model)
 from django import forms
-from .models import Profile
+from .models import Profile, Medication, Schedule
 
 # User Registration Form
 class UserCreateForm(forms.ModelForm):
@@ -51,5 +51,28 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('phone_number',)
+
+class MedForm(forms.ModelForm):
+    class Meta:
+        model = Medication
+        fields = ['pill_name', 'module_num']
+        labels= {
+            'pill_name': 'Pill Name',
+            'module_num': 'Module Number'
+        }
+
+class ScheduleForm(forms.ModelForm):
+    class Meta:
+        model = Schedule
+        fields = ['category', 'time', 'day', 'counter', 'module_nums']
+        labels= {
+            'category': 'Category',
+            'time': 'Time',
+            'day': 'Day',
+            'counter': 'Counter',
+            'module_nums': 'Module Nums',
+        }
+
+
 
 

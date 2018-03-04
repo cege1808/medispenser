@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator, validate_comma_separated_integer_list
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 class Profile(models.Model):
@@ -20,12 +19,12 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
-class Module(models.Model):
-  user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+class Medication(models.Model):
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
   pill_name = models.CharField("Pill Name", max_length=200)
   module_num = models.IntegerField("Module Number")
 
-class Scheduler(models.Model):
+class Schedule(models.Model):
   CATEGORY_CHOICES = (
       ('week', 'Week'),
       ('day', 'Day'),
@@ -45,7 +44,7 @@ class Scheduler(models.Model):
       ('sun', 'Sunday')
     )
 
-  user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
   category = models.CharField(max_length=6, choices=CATEGORY_CHOICES)
   day = models.CharField(max_length=3, choices=DAY_CHOICES, blank=True)
   time_regex = RegexValidator(regex=r'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$', message='HH:MM format')
