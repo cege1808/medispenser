@@ -49,7 +49,7 @@ def create_user(request):
 		return render(request, 'registration.html', {'form': [*user_form, *profile_form]})
 
 # User login form
-@rensure_csrf_cookie
+@ensure_csrf_cookie
 def login_view(request):
 	form = LoginForm(request.POST or None)
 
