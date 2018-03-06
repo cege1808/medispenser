@@ -58,19 +58,19 @@ class MedForm(forms.ModelForm):
         fields = ['pill_name', 'module_num']
         labels= {
             'pill_name': 'Pill Name',
-            'module_num': 'Module Number'
+            'module_num': 'Module Number',
         }
 
 class ScheduleForm(forms.ModelForm):
     class Meta:
         model = Schedule
-        fields = ['category', 'time', 'day', 'counter', 'module_nums']
+        fields = ['category', 'day', 'time', 'counter', 'module_nums']
         labels= {
             'category': 'Category',
-            'time': 'Time',
             'day': 'Day',
+            'time': 'Time',
             'counter': 'Counter',
-            'module_nums': 'Module Nums',
+            'module_nums': 'Module Number',
         }
 
 

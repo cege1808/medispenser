@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block header_links %}
+    <li class="nav-item"><p>Hi {{ user.username }}!</p></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/edit' %}">Profile</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication/info' %}">Medication Information</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication/add' %}">Add Medication</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/schedule' %}">Schedule</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12 col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <h3>Medication Information</h3>
+
+                <div class="details">
+
+                    <h4> {{ med_data1.pill_name }} </h4>
+                    <h6> Medication: </h6><p>{{ med_data1.module_num }} </p>
+                    <h6> Category: </h6> <p> {{ data1.category }} </p>
+                    <h6> Day: </h6> <p> {{ data1.day }} </p>
+                    <h6> Time: </h6><p> {{ data1.time }} </p>
+                    <h6> Counter: </h6><p> {{ data1.counter }} </p>
+
+                    <h4> {{ med_data2.pill_name }} </h4>
+                    <p> {{ med_data2.module_num }} </p>
+                    <p> {{ data2.category }} </p>
+                    <p> {{ data2.day }} </p>
+                    <p> {{ data2.time }} </p>
+                    <p> {{ data2.counter }} </p>
+
+                    <h4> {{ med_data3.pill_name }} </h4>
+                    <p> {{ med_data3.module_num }} </p>
+                    <p> {{ data3.category }} </p>
+                    <p> {{ data3.day }} </p>
+                    <p> {{ data3.time }} </p>
+                    <p> {{ data3.counter }} </p>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

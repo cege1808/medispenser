@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.contrib import messages
+from django.template.response import TemplateResponse
 
 from .forms import UserCreateForm, UserEditForm, LoginForm, ProfileForm, MedForm, ScheduleForm
 from .models import Profile, Medication, Schedule
@@ -99,43 +100,44 @@ def edit_profile(request):
 		return render(request, 'profile.html', {'form': [*user_form, *profile_form]})
 
 @login_required
-def med_info(request):
-	if request.method == 'POST':
-		med_form = MedForm(request.POST or None)
-		if med_form.is_valid():
-			pill_name = request.POST.get('pill_name', '')
-			module_num = request.POST.get('module_num', '')
-			medication_obj = Medication(pill_name=pill_name, module_num=module_num)
-			medication_obj.save()
-			return redirect('profile/medication')
-	else:
-		med_form = MedForm()
-
-	return render(request, 'med_info.html', {'form': med_form})
+def med_add(request):
+	med_form= MedForm(request.POST or None, request.FILES or None)
+	if med_form.is_valid():
+		fs=med_form.save(commit=False)
+		fs.user=request.user
+		fs.save()
+		return redirect('profile/medication/info')
+	return render(request, 'med_add.html', {'form': med_form})
 
 @login_required
 def schedule_view(request):
-	schedule_form = ScheduleForm(request.POST or None)
+	schedule_form = ScheduleForm(request.POST or None, request.FILES or None)
 
-	if request.method == 'POST':
-		form = ScheduleForm(request.POST or None)
-		if form.is_valid():
-			category = request.POST.get('category', '')
-			time = request.POST.get('time', '')
-			day = request.POST.get('day', '')
-			schedule_obj = Schedule(category=category, time=time, day=day)
-			schedule_obj.save()
-			return redirect('profile/schedule')
-	else:
-		form = ScheduleForm()
-
+	if schedule_form.is_valid():
+		fs=schedule_form.save(commit=False)
+		fs.user=request.user
+		fs.save()
+		return redirect('profile/schedule')
 
 	return render(request, 'med_schedule.html', {'form': schedule_form})
 
+@login_required
+def med_info(request):
+	def get_or_none(classmodel, **kwargs):
+		try:
+			return classmodel.objects.get(**kwargs)
+		except classmodel.DoesNotExist:
+			return None
 
+	med_data1 = get_or_none(Medication, user=request.user, module_num=1)
+	med_data2 = get_or_none(Medication,user=request.user, module_num=2)
+	med_data3 = get_or_none(Medication,user=request.user, module_num=3)
 
+	data1 = get_or_none(Schedule, user=request.user, module_nums=1)
+	data2 = get_or_none(Schedule, user=request.user, module_nums=2)
+	data3 = get_or_none(Schedule, user=request.user, module_nums=3)
 
-
+	return TemplateResponse(request, 'med_overall.html', {'med_data1': med_data1, 'med_data2': med_data2, 'med_data3': med_data3, 'data1': data1, 'data2': data2, 'data3': data3})
 
 
 
