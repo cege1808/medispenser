@@ -108,7 +108,7 @@ def medication(request):
 	for schedule in schedule_data:
 		schedule.module_nums = [int(x) for x in schedule.module_nums.split(',') ]
 
-	return render(request, 'medication.html', {'medication_data': medication_data, 'schedule_data': schedule_data})
+	return render(request, 'medication/show.html', {'medication_data': medication_data, 'schedule_data': schedule_data})
 
 @login_required
 def new_medication(request):
@@ -118,7 +118,7 @@ def new_medication(request):
 		fs.user=request.user
 		fs.save()
 		return redirect('profile/medication')
-	return render(request, 'new_medication.html', {'form': med_form})
+	return render(request, 'medication/new.html', {'form': med_form})
 
 @login_required
 def edit_medication(request):
@@ -137,7 +137,7 @@ def edit_medication(request):
 			fs.user=request.user
 			fs.save()
 			return redirect('profile/medication')
-	return render(request, 'edit_medication.html', {'form': med_form})
+	return render(request, 'medication/edit.html', {'form': med_form})
 
 @login_required
 def delete_medication(request):
@@ -157,7 +157,7 @@ def delete_medication(request):
 	except Exception:
 		pass
 
-	return render(request, 'delete_medication.html', {'med': med_info})
+	return render(request, 'medication/delete.html', {'med': med_info})
 
 @login_required
 def schedule_view(request):
