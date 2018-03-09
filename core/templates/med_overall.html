@@ -18,31 +18,19 @@
 
                 <div class="details">
 
-                    <h4> {{ med_data1.pill_name }} </h4>
-                    <h6> Medication: </h6><p>{{ med_data1.module_num }} </p>
-                    <h6> Category: </h6> <p> {{ data1.category }} </p>
-                    <h6> Day: </h6> <p> {{ data1.day }} </p>
-                    <h6> Time: </h6><p> {{ data1.time }} </p>
-                    <h6> Counter: </h6><p> {{ data1.counter }} </p>
-
-                    <h4> {{ med_data2.pill_name }} </h4>
-                    <p> {{ med_data2.module_num }} </p>
-                    <p> {{ data2.category }} </p>
-                    <p> {{ data2.day }} </p>
-                    <p> {{ data2.time }} </p>
-                    <p> {{ data2.counter }} </p>
-
-                    <h4> {{ med_data3.pill_name }} </h4>
-                    <p> {{ med_data3.module_num }} </p>
-                    <p> {{ data3.category }} </p>
-                    <p> {{ data3.day }} </p>
-                    <p> {{ data3.time }} </p>
-                    <p> {{ data3.counter }} </p>
+                    {% for x in med_data_list %}
+                    {% for y in data_list %}
+                        <h4> {{ x.pill_name }} </h4>
+                        <h6> Medication: </h6><p>{{ x.module_num }} </p>
+                        <h6> Category: </h6> <p> {{ y.category }} </p>
+                        <h6> Day: </h6> <p> {{ y.day }} </p>
+                        <h6> Time: </h6><p> {{ y.time }} </p>
+                        <h6> Counter: </h6><p> {{ y.counter }} </p>
+                    {% endfor %}
+                    {% endfor %}
 
                 </div>
-
             </div>
-
         </div>
     </div>
 </div>

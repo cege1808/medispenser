@@ -132,12 +132,13 @@ def med_info(request):
 	med_data1 = get_or_none(Medication, user=request.user, module_num=1)
 	med_data2 = get_or_none(Medication,user=request.user, module_num=2)
 	med_data3 = get_or_none(Medication,user=request.user, module_num=3)
-
+	med_data_list = [med_data1, med_data2, med_data3]
 	data1 = get_or_none(Schedule, user=request.user, module_nums=1)
 	data2 = get_or_none(Schedule, user=request.user, module_nums=2)
 	data3 = get_or_none(Schedule, user=request.user, module_nums=3)
+	data_list = [data1, data2, data3]
 
-	return TemplateResponse(request, 'med_overall.html', {'med_data1': med_data1, 'med_data2': med_data2, 'med_data3': med_data3, 'data1': data1, 'data2': data2, 'data3': data3})
+	return TemplateResponse(request, 'med_overall.html', {'med_data1': med_data1, 'med_data2': med_data2, 'med_data3': med_data3, 'data1': data1, 'data2': data2, 'data3': data3, 'med_data_list': med_data_list, 'data_list': data_list})
 
 
 
