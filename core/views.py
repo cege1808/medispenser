@@ -100,14 +100,14 @@ def edit_profile(request):
 		return render(request, 'profile.html', {'form': [*user_form, *profile_form]})
 
 @login_required
-def med_add(request):
+def medication_add(request):
 	med_form= MedForm(request.POST or None, request.FILES or None)
 	if med_form.is_valid():
 		fs=med_form.save(commit=False)
 		fs.user=request.user
 		fs.save()
-		return redirect('profile/medication/info')
-	return render(request, 'med_add.html', {'form': med_form})
+		return redirect('profile/medication')
+	return render(request, 'medication_add.html', {'form': med_form})
 
 @login_required
 def schedule_view(request):
