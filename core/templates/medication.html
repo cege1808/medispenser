@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block header_links %}
+    <li class="nav-item"><p>Hi {{ user.username }}!</p></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/edit' %}">Profile</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication' %}">Medication Information</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication/add' %}">Add Medication</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/schedule' %}">Schedule</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12 col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <h3>Medication Information</h3>
+
+                <div class="details list-group list-group-flush">
+                    {{ data_list}}
+                    {% for med in medication_data %}
+                        <li class="list-group-item">
+                            <h5>Module {{ med.module_num }}</h5>
+                            <p> Medication: {{ med.pill_name }}</p>
+                            {% for schedule in schedule_data %}
+                                {% if med.module_num in schedule.module_nums %}
+                                    <h6>Schedule {{ schedule.id }}</h6>
+                                    <p>Category: {{ schedule.category|title }}</p>
+                                    <p>Day: {{ schedule.day|title }}</p>
+                                    <p>Time: {{ schedule.time }}</p>
+                                    <p>Couter: {{ schedule.counter }}</p>
+                                {% endif %}
+                            {% endfor %}
+                        </li>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

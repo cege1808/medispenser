@@ -11,6 +11,6 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile, name='profile/edit'),
     path('profile/medication/add', views.med_add, name='profile/medication/add'),
     path('profile/schedule', views.schedule_view, name='profile/schedule'),
-    path('profile/medication/info', views.med_info, name='profile/medication/info'),
+    path('profile/medication', views.medication_information, name='profile/medication'),
     path('demo/', views.demo, name='demo'),
 ]

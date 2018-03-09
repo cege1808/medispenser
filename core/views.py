@@ -122,23 +122,14 @@ def schedule_view(request):
 	return render(request, 'med_schedule.html', {'form': schedule_form})
 
 @login_required
-def med_info(request):
-	def get_or_none(classmodel, **kwargs):
-		try:
-			return classmodel.objects.get(**kwargs)
-		except classmodel.DoesNotExist:
-			return None
+def medication_information(request):
+	medication_data = list(request.user.medication_set.all().order_by('module_num'))
+	schedule_data = list(request.user.schedule_set.all())
 
-	med_data1 = get_or_none(Medication, user=request.user, module_num=1)
-	med_data2 = get_or_none(Medication,user=request.user, module_num=2)
-	med_data3 = get_or_none(Medication,user=request.user, module_num=3)
-	med_data_list = [med_data1, med_data2, med_data3]
-	data1 = get_or_none(Schedule, user=request.user, module_nums=1)
-	data2 = get_or_none(Schedule, user=request.user, module_nums=2)
-	data3 = get_or_none(Schedule, user=request.user, module_nums=3)
-	data_list = [data1, data2, data3]
+	for schedule in schedule_data:
+		schedule.module_nums = [int(x) for x in schedule.module_nums.split(',') ]
 
-	return TemplateResponse(request, 'med_overall.html', {'med_data1': med_data1, 'med_data2': med_data2, 'med_data3': med_data3, 'data1': data1, 'data2': data2, 'data3': data3, 'med_data_list': med_data_list, 'data_list': data_list})
+	return TemplateResponse(request, 'medication.html', {'medication_data': medication_data, 'schedule_data': schedule_data})
 
 
 
