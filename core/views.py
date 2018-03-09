@@ -99,15 +99,65 @@ def edit_profile(request):
 			profile_form = ProfileForm(instance=request.user.profile)
 		return render(request, 'profile.html', {'form': [*user_form, *profile_form]})
 
+
 @login_required
-def medication_add(request):
+def medication(request):
+	medication_data = list(request.user.medication_set.all().order_by('module_num'))
+	schedule_data = list(request.user.schedule_set.all())
+
+	for schedule in schedule_data:
+		schedule.module_nums = [int(x) for x in schedule.module_nums.split(',') ]
+
+	return render(request, 'medication.html', {'medication_data': medication_data, 'schedule_data': schedule_data})
+
+@login_required
+def new_medication(request):
 	med_form= MedForm(request.POST or None, request.FILES or None)
 	if med_form.is_valid():
 		fs=med_form.save(commit=False)
 		fs.user=request.user
 		fs.save()
 		return redirect('profile/medication')
-	return render(request, 'medication_add.html', {'form': med_form})
+	return render(request, 'new_medication.html', {'form': med_form})
+
+@login_required
+def edit_medication(request):
+	try:
+		med_id = request.GET['med'][0]
+		med_info = Medication.objects.get(id=med_id)
+	except Medication.DoesNotExist:
+		messages.error(request, 'Invalid medication!')
+		return medication(request)
+
+	med_form= MedForm(request.POST or None, instance=med_info)
+
+	if request.method == 'POST':
+		if med_form.is_valid():
+			fs=med_form.save(commit=False)
+			fs.user=request.user
+			fs.save()
+			return redirect('profile/medication')
+	return render(request, 'edit_medication.html', {'form': med_form})
+
+@login_required
+def delete_medication(request):
+	try:
+		med_id = request.GET['med'][0]
+		med_info = Medication.objects.get(id=med_id)
+	except Medication.DoesNotExist:
+		messages.error(request, 'Invalid medication!')
+		return medication(request)
+
+	try:
+		delete_reply = request.GET['delete_reply']
+		if delete_reply == 'yes':
+			med_info.delete()
+			print('delete meds')
+		return medication(request)
+	except Exception:
+		pass
+
+	return render(request, 'delete_medication.html', {'med': med_info})
 
 @login_required
 def schedule_view(request):
@@ -120,21 +170,6 @@ def schedule_view(request):
 		return redirect('profile/schedule')
 
 	return render(request, 'med_schedule.html', {'form': schedule_form})
-
-@login_required
-def medication_information(request):
-	medication_data = list(request.user.medication_set.all().order_by('module_num'))
-	schedule_data = list(request.user.schedule_set.all())
-
-	for schedule in schedule_data:
-		schedule.module_nums = [int(x) for x in schedule.module_nums.split(',') ]
-
-	return TemplateResponse(request, 'medication.html', {'medication_data': medication_data, 'schedule_data': schedule_data})
-
-
-
-
-
 
 
 

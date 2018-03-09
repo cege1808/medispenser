@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block header_links %}
+    <li class="nav-item"><p>Hi {{ user.username }}!</p></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/edit' %}">Profile</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication' %}">Medication Information</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/schedule' %}">Schedule</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12 col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <h3>Delete Medication</h3>
+                <div class="details list-group list-group-flush">
+                  <li class="list-group-item">
+                      <h5> Module {{ med.module_num }}</h5>
+                      <p> Medication: {{ med.pill_name }}</p>
+                  </li>
+                  <li class="list-group-item">
+                    <h4>Are you sure you want to delete medication instance?</h4>
+                      <a href="{% url 'profile/medication/delete'%}?med={{ med.id }}&delete_reply=yes">
+                          <button type="submit" role="button" class="btn btn-danger">Yes</button>
+                      </a>
+                      <a href="{% url 'profile/medication/delete'%}?med={{ med.id }}&delete_reply=no">
+                          <button type="submit" role="button" class="btn btn-primary">No</button>
+                      </a>
+                  </li>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
