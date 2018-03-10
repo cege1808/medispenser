@@ -152,7 +152,6 @@ def delete_medication(request):
 		delete_reply = request.GET['delete_reply']
 		if delete_reply == 'yes':
 			med_info.delete()
-			print('delete meds')
 		return medication(request)
 	except Exception:
 		pass
@@ -160,17 +159,57 @@ def delete_medication(request):
 	return render(request, 'medication/delete.html', {'med': med_info})
 
 @login_required
-def schedule_view(request):
-	schedule_form = ScheduleForm(request.POST or None, request.FILES or None)
+def show_schedule(request):
+	schedule_data = list(request.user.schedule_set.all())
+	return render(request, 'schedule/show.html', {'schedule_data': schedule_data})
 
-	if schedule_form.is_valid():
-		fs=schedule_form.save(commit=False)
+@login_required
+def new_schedule(request):
+	sched_form= ScheduleForm(request.POST or None, request.FILES or None)
+	if sched_form.is_valid():
+		fs=sched_form.save(commit=False)
 		fs.user=request.user
 		fs.save()
 		return redirect('profile/schedule')
+	return render(request, 'schedule/new.html', {'form': sched_form})
 
-	return render(request, 'med_schedule.html', {'form': schedule_form})
+@login_required
+def edit_schedule(request):
+	try:
+		sched_id = request.GET['sched'][0]
+		sched_info = Schedule.objects.get(id=sched_id)
+	except Schedule.DoesNotExist:
+		messages.error(request, 'Invalid schedule!')
+		return show_schedule(request)
 
+	sched_form= ScheduleForm(request.POST or None, instance=sched_info)
+
+	if request.method == 'POST':
+		if sched_form.is_valid():
+			fs=sched_form.save(commit=False)
+			fs.user=request.user
+			fs.save()
+			return redirect('profile/schedule')
+	return render(request, 'schedule/edit.html', {'form': sched_form})
+
+@login_required
+def delete_schedule(request):
+	try:
+		sched_id = request.GET['sched']
+		sched_info = Schedule.objects.get(id=sched_id)
+	except Schedule.DoesNotExist:
+		messages.error(request, 'Invalid schedule!')
+		return show_schedule(request)
+
+	try:
+		delete_reply = request.GET['delete_reply']
+		if delete_reply == 'yes':
+			sched_info.delete()
+		return show_schedule(request)
+	except Exception:
+		pass
+
+	return render(request, 'schedule/delete.html', {'sched': sched_info})
 
 
 
