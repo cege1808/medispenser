@@ -101,7 +101,7 @@ def edit_profile(request):
 
 
 @login_required
-def medication(request):
+def show_medication(request):
 	medication_data = list(request.user.medication_set.all().order_by('module_num'))
 	schedule_data = list(request.user.schedule_set.all())
 
@@ -127,7 +127,7 @@ def edit_medication(request):
 		med_info = Medication.objects.get(id=med_id)
 	except Medication.DoesNotExist:
 		messages.error(request, 'Invalid medication!')
-		return medication(request)
+		return show_medication(request)
 
 	med_form= MedForm(request.POST or None, instance=med_info)
 
@@ -146,13 +146,13 @@ def delete_medication(request):
 		med_info = Medication.objects.get(id=med_id)
 	except Medication.DoesNotExist:
 		messages.error(request, 'Invalid medication!')
-		return medication(request)
+		return show_medication(request)
 
 	try:
 		delete_reply = request.GET['delete_reply']
 		if delete_reply == 'yes':
 			med_info.delete()
-		return medication(request)
+		return show_medication(request)
 	except Exception:
 		pass
 
