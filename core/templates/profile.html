@@ -3,7 +3,7 @@
 {% block header_links %}
     <li class="nav-item"><p>Hi {{ user.username }}!</p></li>
     <li class="nav-item"><a class="nav-link" href="{% url 'profile/edit' %}">Profile</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication' %}">Medication</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication' %}">Medication Information</a></li>
     <li class="nav-item"><a class="nav-link" href="{% url 'profile/schedule' %}">Schedule</a></li>
     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
 {% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block header_links %}
+    <li class="nav-item"><p>Hi {{ user.username }}!</p></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/edit' %}">Profile</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication' %}">Medication Information</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/schedule' %}">Schedule</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12 col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <div class="row">
+                        <h3 class="col-10 align-self-start">Medication Information</h3>
+                        <a href="{% url 'profile/medication/new' %}" ><button type="button" role="button" class="btn btn-primary">Add</button></a>
+                    </div>
+                </div>
+
+                <div class="details list-group list-group-flush">
+                    {% for med in medication_data %}
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-8 align-self-start">
+                                    <h5>Module {{ med.module_num }}</h5>
+                                    <p> Medication: {{ med.pill_name }}</p>
+                                    {% for schedule in schedule_data %}
+                                        {% if med.module_num in schedule.module_nums %}
+                                            <h6>Schedule {{ schedule.id }}</h6>
+                                            <p>Category: {{ schedule.category|title }}</p>
+                                            <p>Day: {{ schedule.day|title }}</p>
+                                            <p>Time: {{ schedule.time }}</p>
+                                            <p>Couter: {{ schedule.counter }}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div>
+                                    <a href="{% url 'profile/medication/edit'%}?med={{ med.id }}">
+                                        <button type="button" role="button" class="btn btn-primary">Edit</button>
+                                    </a>
+                                    <a href="{% url 'profile/medication/delete'%}?med={{ med.id }}">
+                                        <button type="button" role="button" class="btn btn-primary">Delete</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

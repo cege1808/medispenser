@@ -1,7 +1,6 @@
 from django.urls import path
 from django.views.generic.base import TemplateView
 from . import views
-# from .views import login_view, logout_view, edit_profile, create_user
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -9,7 +8,13 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('profile/edit/', views.edit_profile, name='profile/edit'),
-    path('profile/medication', views.med_info, name='profile/medication'),
-    path('profile/schedule', views.schedule_view, name='profile/schedule'),
+    path('profile/medication', views.show_medication, name='profile/medication'),
+    path('profile/medication/new', views.new_medication, name='profile/medication/new'),
+    path('profile/medication/edit', views.edit_medication, name='profile/medication/edit'),
+    path('profile/medication/delete', views.delete_medication, name='profile/medication/delete'),
+    path('profile/schedule', views.show_schedule, name='profile/schedule'),
+    path('profile/schedule/new', views.new_schedule, name='profile/schedule/new'),
+    path('profile/schedule/edit', views.edit_schedule, name='profile/schedule/edit'),
+    path('profile/schedule/delete', views.delete_schedule, name='profile/schedule/delete'),
     path('demo/', views.demo, name='demo'),
 ]

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block header_links %}
+    <li class="nav-item"><p>Hi {{ user.username }}!</p></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/edit' %}">Profile</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication' %}">Medication Information</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'profile/schedule' %}">Schedule</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12 col-lg-7">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <div class="row">
+                        <h3 class="col-10 align-self-start">Schedule Information</h3>
+                        <a href="{% url 'profile/schedule/new' %}" ><button type="button" role="button" class="btn btn-primary">Add</button></a>
+                    </div>
+                </div>
+
+                <div class="details list-group list-group-flush">
+                    {% for sched in schedule_data %}
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-8 align-self-start">
+                                    <h5>Schedule {{ sched.id }}</h5>
+                                    <p>Category: {{ sched.category|title }}</p>
+                                    <p>Day: {{ sched.day|title }}</p>
+                                    <p>Time: {{ sched.time }}</p>
+                                    <p>Couter: {{ sched.counter }}</p>
+                                    <p>Module Numbers: {{ sched.module_nums }}</p>
+                                </div>
+                                <div>
+                                    <a href="{% url 'profile/schedule/edit'%}?sched={{ sched.id }}">
+                                        <button type="button" role="button" class="btn btn-primary">Edit</button>
+                                    </a>
+                                    <a href="{% url 'profile/schedule/delete'%}?sched={{ sched.id }}">
+                                        <button type="button" role="button" class="btn btn-primary">Delete</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

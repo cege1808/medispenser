@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.contrib import messages
+from django.template.response import TemplateResponse
 from django.views.decorators.csrf import requires_csrf_token, ensure_csrf_cookie
 from .forms import UserCreateForm, UserEditForm, LoginForm, ProfileForm, MedForm, ScheduleForm
 from .models import Profile, Medication, Schedule
@@ -118,34 +119,115 @@ def med_info(request):
 
 @ensure_csrf_cookie
 @login_required
-def schedule_view(request):
-	schedule_form = ScheduleForm(request.POST or None)
+def show_medication(request):
+	medication_data = list(request.user.medication_set.all().order_by('module_num'))
+	schedule_data = list(request.user.schedule_set.all())
+
+	for schedule in schedule_data:
+		schedule.module_nums = [int(x) for x in schedule.module_nums.split(',') ]
+
+	return render(request, 'medication/show.html', {'medication_data': medication_data, 'schedule_data': schedule_data})
+
+@login_required
+def new_medication(request):
+	med_form= MedForm(request.POST or None, request.FILES or None)
+	if med_form.is_valid():
+		fs=med_form.save(commit=False)
+		fs.user=request.user
+		fs.save()
+		return redirect('profile/medication')
+	return render(request, 'medication/new.html', {'form': med_form})
+
+@login_required
+def edit_medication(request):
+	try:
+		med_id = request.GET['med'][0]
+		med_info = Medication.objects.get(id=med_id)
+	except Medication.DoesNotExist:
+		messages.error(request, 'Invalid medication!')
+		return show_medication(request)
+
+	med_form= MedForm(request.POST or None, instance=med_info)
 
 	if request.method == 'POST':
-		form = ScheduleForm(request.POST or None)
-		if form.is_valid():
-			category = request.POST.get('category', '')
-			time = request.POST.get('time', '')
-			day = request.POST.get('day', '')
-			schedule_obj = Schedule(category=category, time=time, day=day)
-			schedule_obj.save()
+		if med_form.is_valid():
+			fs=med_form.save(commit=False)
+			fs.user=request.user
+			fs.save()
+			return redirect('profile/medication')
+	return render(request, 'medication/edit.html', {'form': med_form})
+
+@login_required
+def delete_medication(request):
+	try:
+		med_id = request.GET['med'][0]
+		med_info = Medication.objects.get(id=med_id)
+	except Medication.DoesNotExist:
+		messages.error(request, 'Invalid medication!')
+		return show_medication(request)
+
+	try:
+		delete_reply = request.GET['delete_reply']
+		if delete_reply == 'yes':
+			med_info.delete()
+		return show_medication(request)
+	except Exception:
+		pass
+
+	return render(request, 'medication/delete.html', {'med': med_info})
+
+@login_required
+def show_schedule(request):
+	schedule_data = list(request.user.schedule_set.all())
+	return render(request, 'schedule/show.html', {'schedule_data': schedule_data})
+
+@login_required
+def new_schedule(request):
+	sched_form= ScheduleForm(request.POST or None, request.FILES or None)
+	if sched_form.is_valid():
+		fs=sched_form.save(commit=False)
+		fs.user=request.user
+		fs.save()
+		return redirect('profile/schedule')
+	return render(request, 'schedule/new.html', {'form': sched_form})
+
+@login_required
+def edit_schedule(request):
+	try:
+		sched_id = request.GET['sched'][0]
+		sched_info = Schedule.objects.get(id=sched_id)
+	except Schedule.DoesNotExist:
+		messages.error(request, 'Invalid schedule!')
+		return show_schedule(request)
+
+	sched_form= ScheduleForm(request.POST or None, instance=sched_info)
+
+	if request.method == 'POST':
+		if sched_form.is_valid():
+			fs=sched_form.save(commit=False)
+			fs.user=request.user
+			fs.save()
 			return redirect('profile/schedule')
-	else:
-		form = ScheduleForm()
+	return render(request, 'schedule/edit.html', {'form': sched_form})
 
+@login_required
+def delete_schedule(request):
+	try:
+		sched_id = request.GET['sched']
+		sched_info = Schedule.objects.get(id=sched_id)
+	except Schedule.DoesNotExist:
+		messages.error(request, 'Invalid schedule!')
+		return show_schedule(request)
 
-	return render(request, 'med_schedule.html', {'form': schedule_form})
+	try:
+		delete_reply = request.GET['delete_reply']
+		if delete_reply == 'yes':
+			sched_info.delete()
+		return show_schedule(request)
+	except Exception:
+		pass
 
-
-
-
-
-
-
-
-
-
-
+	return render(request, 'schedule/delete.html', {'sched': sched_info})
 
 
 

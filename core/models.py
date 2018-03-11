@@ -20,9 +20,9 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 class Medication(models.Model):
-  user = models.ForeignKey(User, on_delete=models.CASCADE)
-  pill_name = models.CharField("Pill Name", max_length=200)
-  module_num = models.IntegerField("Module Number")
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	pill_name = models.CharField("Pill Name", max_length=200)
+	module_num = models.IntegerField("Module Number")
 
 class Schedule(models.Model):
   CATEGORY_CHOICES = (
@@ -46,10 +46,10 @@ class Schedule(models.Model):
 
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   category = models.CharField(max_length=6, choices=CATEGORY_CHOICES)
-  day = models.CharField(max_length=3, choices=DAY_CHOICES, blank=True)
+  day = models.CharField(max_length=3, choices=DAY_CHOICES, blank=True, null=True)
   time_regex = RegexValidator(regex=r'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$', message='HH:MM format')
-  time = models.CharField(validators=[time_regex], max_length=5, blank=True)
-  counter = models.IntegerField(blank=True)
+  time = models.CharField(validators=[time_regex], max_length=5, blank=True, null=True)
+  counter = models.IntegerField(blank=True, null=True)
   module_nums = models.CharField("Module Number(s)", validators=[validate_comma_separated_integer_list], max_length=250)
 
 
