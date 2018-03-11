@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.contrib import messages
 from django.template.response import TemplateResponse
-
+from django.views.decorators.csrf import requires_csrf_token, ensure_csrf_cookie
 from .forms import UserCreateForm, UserEditForm, LoginForm, ProfileForm, MedForm, ScheduleForm
 from .models import Profile, Medication, Schedule
 
@@ -16,6 +16,7 @@ def index(request):
 def demo(request):
 	return render(request, "demo.html")
 
+@ensure_csrf_cookie
 @transaction.atomic
 def create_user(request):
 
@@ -49,6 +50,7 @@ def create_user(request):
 		return render(request, 'registration.html', {'form': [*user_form, *profile_form]})
 
 # User login form
+@ensure_csrf_cookie
 def login_view(request):
 	form = LoginForm(request.POST or None)
 
@@ -69,7 +71,7 @@ def logout_view(request):
 	logout(request)
 	return redirect('index')
 
-
+@ensure_csrf_cookie
 @login_required
 @transaction.atomic
 def edit_profile(request):
@@ -99,7 +101,23 @@ def edit_profile(request):
 			profile_form = ProfileForm(instance=request.user.profile)
 		return render(request, 'profile.html', {'form': [*user_form, *profile_form]})
 
+@ensure_csrf_cookie
+@login_required
+def med_info(request):
+	if request.method == 'POST':
+		med_form = MedForm(request.POST or None)
+		if med_form.is_valid():
+			pill_name = request.POST.get('pill_name', '')
+			module_num = request.POST.get('module_num', '')
+			medication_obj = Medication(pill_name=pill_name, module_num=module_num)
+			medication_obj.save()
+			return redirect('profile/medication')
+	else:
+		med_form = MedForm()
 
+	return render(request, 'med_info.html', {'form': med_form})
+
+@ensure_csrf_cookie
 @login_required
 def show_medication(request):
 	medication_data = list(request.user.medication_set.all().order_by('module_num'))

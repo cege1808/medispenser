@@ -39,6 +39,9 @@ Run at localhost:8000 by default
 `celery worker -A medispenser -Q {queue_name}`
 
 
+## Live Site
+https://www.medispenser.herokuapp.com
+
 ## References
 https://www.tutorialspoint.com/django/index.htm
 
