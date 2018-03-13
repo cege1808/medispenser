@@ -12,8 +12,10 @@ const int baudrate = 9600;
 // Pin contants
 const int num_of_modules = 3;
 const int motor_driver_pins[3][4] = { {2,3,4,5}, {6,7,8,9}, {10,11,12,13} };
-const int ir_detection_pins[3] = {A0,A1,A2};
-const int led_pin = A5;
+const int ir_pill_detection_pins[3] = {A0,A2,A4};
+const int ir_encoder_detection_pins[3] = {A1,A3,A5};
+const int button_pin = 7;
+const int led_pin = A6;
 
 // Motor constants
 const int motor_speed = 2000;
@@ -21,7 +23,8 @@ const int motor_lookup[8] = {B01000, B01100, B00100, B00110, B00010, B00011, B00
 const int steps_in_one_rotation = 512;
 
 // IR sensor
-const int ir_sensor_limit = 820;
+const int ir_pill_sensor_limit = 820;
+const int ir_encoder_sensor_limit = 400;
 
 // States
 char incoming_byte;
@@ -67,7 +70,10 @@ void initialize_pins(){
       pinMode(motor_driver_pins[i][j], OUTPUT);
     }
     // IR sensor
-     pinMode(ir_detection_pins[i], INPUT);
+     pinMode(ir_pill_detection_pins[i], INPUT);
+     pinMode(ir_encoder_detection_pins[i], INPUT);
+    // Button
+     pinMode(button_pin, INPUT);
     // Led
      pinMode(led_pin, OUTPUT);
   }
@@ -119,7 +125,26 @@ String process_instruction(String instruction){
   else if(inbound_str[0] == 'C'){
     return run_calibration_instruction(inbound_str);
   }
+  else if(inbound_str[0] == 'B'){
+    return wait_button_press_instruction(inbound_str);
+  }
 }
+
+String wait_button_press_instruction(String instruction){
+  // Wait for button to be pressed
+  char module_char = instruction[1];
+  int module_num = convert_char_to_int(module_char);
+  bool button_pressed = false;
+  while(!button_pressed){
+    int button_status = digitalRead(button_pin);
+    Serial.println(button_status);
+    if(button_status == 1){
+      button_pressed = true;
+    }
+  }
+  return instruction + 'Y';
+}
+
 
 String run_calibration_instruction(String instruction){
   // Move motor to calibrate to position 0
@@ -134,6 +159,8 @@ String run_calibration_instruction(String instruction){
   return instruction + 'Y';
 }
 
+
+
 String run_led_instruction(String instruction){
   // Turn on/off an led
   if(instruction[1] == 'H'){
@@ -144,6 +171,12 @@ String run_led_instruction(String instruction){
     // Led off
     digitalWrite(led_pin, LOW);
   }
+  else if(instruction[1] == 'B'){
+    digitalWrite(led_pin, LOW);
+    digitalWrite(led_pin, HIGH);
+    delay(1000);
+    digitalWrite(led_pin, LOW);
+  }
   return instruction + 'Y';
 }
 
@@ -151,9 +184,9 @@ String run_verification_instruction(String instruction){
   // Verify if pill has been dropped
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
-  int ir_value = analogRead(ir_detection_pins[module_num]);
+  int ir_value = analogRead(ir_pill_detection_pins[module_num]);
   Serial.println(ir_value);
-  if(ir_value < ir_sensor_limit){
+  if(ir_value < ir_pill_sensor_limit){
     return instruction + 'Y';
   }
   else{
@@ -165,9 +198,7 @@ String run_prepare_drop_instruction(String instruction){
   // Prepare to drop a pill with 7/8 rotation
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
-//  int step_num = (steps_in_one_rotation * 7) / 8;
-  int step_num = int(float(315.0 /360.0) * steps_in_one_rotation);
-  rotation(counterclockwise, module_num, step_num);
+  move_to_ir_position(module_num);
   return instruction + 'Y';
 }
 
@@ -175,9 +206,9 @@ String run_repeat_prepare_drop_instruction(String instruction){
   // Repeat prepare to drop a pill with one rotation
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
-//  int step_num = steps_in_one_rotation;
-  int step_num = int(float(360.0 /360.0) * steps_in_one_rotation);
+  int step_num = int(float(40.0 /360.0) * steps_in_one_rotation);
   rotation(counterclockwise, module_num, step_num);
+  move_to_ir_position(module_num);
   return instruction + 'Y';
 }
 
@@ -189,6 +220,19 @@ String run_drop_instruction(String instruction){
   int step_num = int(float(40.0 /360.0) * steps_in_one_rotation);
   rotation(counterclockwise, module_num, step_num);
   return instruction + 'Y';
+}
+
+
+void move_to_ir_position(int module_num){
+  bool correct_position = false;
+  while(!correct_position){
+    rotation(counterclockwise, module_num, 1);
+    int ir_value = analogRead(ir_encoder_detection_pins[module_num]);
+    Serial.println(ir_value);
+    if(ir_value > ir_encoder_sensor_limit){
+      correct_position = true;
+    }
+  }
 }
 
 
