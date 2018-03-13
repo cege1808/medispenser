@@ -71,7 +71,38 @@ class ContinuousTaskManager(TaskManager):
         # TODO restart serial if not available
         pass
 
-class TaskManagerButtonTrigger(TaskManager):
+class LoggingDemo(TaskManager):
+
+  def __init__(self):
+    super().__init__()
+    db_dict = [{'category': 'minute', 'day': None, 'time': None, 'counter': 2, 'module_nums': [0]}]
+    self.setup_scheduler(db_dict)
+    self.initialize_pill()
+    self.main_loop()
+
+  def initialize_pill():
+    self.arduino.prepare_and_verify(self.module_num)
+
+  def main_loop(self):
+    while True:
+      self.scheduler.run_pending()
+      if self.instruction_available() and self.serial_is_open():
+        self.arduino.wait_button_pressed()
+        self.arduino.turn_on_led()
+        for module_num in self.instruction_queue[0]:
+          self.arduino.drop_pill(module_num)
+          self.debug('Pill successfully dropped')
+          self.arduino.prepare_and_verify(self.module_num)
+
+        self.arduino.turn_off_led()
+        self.remove_nth_instruction(0)
+        # TODO log info to database
+
+      elif self.instruction_available():
+        # TODO restart serial if not available
+        pass
+
+class ButtonTriggerDemo(TaskManager):
 
   def __init__(self, module_num=1):
     super().__init__()

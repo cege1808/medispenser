@@ -86,8 +86,13 @@ class Arduino(Base):
     self.serial.write_line(instruction)
     return self.get_response(instruction)
 
-  def wait_button_pressed(self, module_num):
-    instruction = '<B{}>'.format(module_num)
+  def wait_button_pressed(self):
+    instruction = '<B>'
+    self.serial.write_line(instruction)
+    return self.get_response(instruction)
+
+  def alert_and_wait_button_pressed(self):
+    instruction = '<A>'
     self.serial.write_line(instruction)
     return self.get_response(instruction)
 

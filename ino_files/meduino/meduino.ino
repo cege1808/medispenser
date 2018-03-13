@@ -128,14 +128,31 @@ String process_instruction(String instruction){
   else if(inbound_str[0] == 'B'){
     return wait_button_press_instruction(inbound_str);
   }
+  else if(inbound_str[0] == 'A'){
+    return alert_and_wait_button_press_instruction(inbound_str);
+  }
 }
 
 String wait_button_press_instruction(String instruction){
   // Wait for button to be pressed
-  char module_char = instruction[1];
-  int module_num = convert_char_to_int(module_char);
   bool button_pressed = false;
   while(!button_pressed){
+    int button_status = digitalRead(button_pin);
+    Serial.println(button_status);
+    if(button_status == 1){
+      button_pressed = true;
+    }
+  }
+  return instruction + 'Y';
+}
+
+
+String alert_and_wait_button_press_instruction(String instruction){
+  // Wait for button to be pressed
+  bool button_pressed = false;
+  while(!button_pressed){
+    digitalWrite(led_pin, LOW);
+    digitalWrite(led_pin, HIGH);
     int button_status = digitalRead(button_pin);
     Serial.println(button_status);
     if(button_status == 1){
