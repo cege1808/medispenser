@@ -27,6 +27,21 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="nav header-height">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><p>Hi {{ user.username }}!</p></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile/edit' %}">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication' %}">Medication</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile/schedule' %}">Schedule</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile/log' %}">Logs</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                    {% elif "login" in request.path %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Signup</a></li>
+                    {% elif "register" in request.path %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Signup</a></li>
+                    {% endif %}
                     {% block header_links %}{% endblock %}
                 </ul>
             </div>
@@ -40,4 +55,8 @@
             {% endblock %}
         </div>
     </body>
+
+    {% block script_links %}{% endblock %}
 </html>
+
+
