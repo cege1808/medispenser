@@ -1,17 +1,5 @@
 {% extends 'base.html' %}
 
-{% block header_links %}
-    {% if user.is_authenticated %}
-      <li class="nav-item"><p>Hi {{ user.username }}!</p></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'profile/edit' %}">Profile</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-    {% else %}
-      <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Signup</a></li>
-    {% endif %}
-{% endblock %}
-
-
 {% block body %}
 <h1>Choose one of the colours</h1>
 <div id="drop-btn-cluster">
