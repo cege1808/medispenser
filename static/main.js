@@ -47,7 +47,6 @@ $(function(){
     colour_ws.onerror = function(message){
       console.log(message);
     }
-
   })
 
   $("#reset-btn-cluster").on('click', function(){
@@ -55,6 +54,30 @@ $(function(){
     $("#demo-notification").children().remove()
     $("#reset-btn-cluster").hide()
   })
+
+  var request_log_rows = function(){
+    var displayed_rows =  $("#medication-log tbody").children('tr').length;
+    $.ajax({
+      type: "GET",
+      url: window.origin + '/profile/log_add_row',
+      data: {'displayed_rows': displayed_rows},
+      dataType: 'text',
+      success: function(response){
+        if(response){
+          $("#medication-log tbody").prepend(response);
+        }
+      },
+      error: function(response, status, error){
+        console.log("Status: "+ status + "Error: " + error)
+      }
+    })
+
+  }
+
+  if($("#medication-log").length){
+    setInterval(request_log_rows, 1000)
+  }
+
 
   function create_ws_address(path){
     var ws_scheme = window.location.protocol == 'https:' ? 'wss' : 'ws';

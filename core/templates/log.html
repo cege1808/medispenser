@@ -1,67 +1,30 @@
 {% extends 'base.html' %}
 
-{% block header_links %}
-    <li class="nav-item"><p>Hi {{ user.username }}!</p></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'profile/edit' %}">Profile</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'profile/medication' %}">Medication Information</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'profile/schedule' %}">Schedule</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-{% endblock %}
-
 {% block body %}
 <div class="row">
     <div class="col-md-12 col-lg-7">
         <div class="card">
             <div class="card-body">
                 <h3>Medication Log</h3>
-
-
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Time</th>
-                            <th scope="col">Module Number</th>
-                            <th scope="col">Medication</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Mark</td>
-                          <td>Otto</td>
-                          <td>@mdo</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">2</th>
-                          <td>Jacob</td>
-                          <td>Thornton</td>
-                          <td>@fat</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">3</th>
-                          <td>Larry</td>
-                          <td>the Bird</td>
-                          <td>@twitter</td>
-                        </tr>
-                      </tbody>
-                    </table>
-
+                <table class="table" id="medication-log">
+                  <thead>
+                      <tr>
+                          <th scope="col">DateTime</th>
+                          <th scope="col">Module Number</th>
+                          <th scope="col">Medication</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {% for log in log_data %}
+                      <tr>
+                          <td>{{ log.created_at }}</td>
+                          <td>{{ log.medication.module_num }}</td>
+                          <td>{{ log.medication.pill_name }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+              </table>
         </div>
     </div>
 </div>
 {% endblock %}
-
-<!--             <div class="details list-group list-group-flush">
-                {% for log in log_data %}
-                    <li class="list-group-item">
-                        <div class="row">
-                            <div class="col-8 align-self-start">
-                                <!-- need for loop here -->
-                                <h5>Time {{ log.time }}</h5>
-                                <p>Module Number: {{ log.module_num }}</p>
-                                <p>Medication: {{ log.pill_name }}</p>
-                            </div>
-                        </div>
-                    </li>
-                {% endfor %}
-            </div> -->

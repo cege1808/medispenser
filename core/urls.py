@@ -16,5 +16,7 @@ urlpatterns = [
     path('profile/schedule/new', views.new_schedule, name='profile/schedule/new'),
     path('profile/schedule/edit', views.edit_schedule, name='profile/schedule/edit'),
     path('profile/schedule/delete', views.delete_schedule, name='profile/schedule/delete'),
+    path('profile/log', views.show_log, name='profile/log'),
+    path('profile/log_add_row', views.log_add_row, name='profile/log_add_row'),
     path('demo/', views.demo, name='demo'),
 ]
