@@ -20,9 +20,12 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 class Medication(models.Model):
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	pill_name = models.CharField("Pill Name", max_length=200)
-	module_num = models.IntegerField("Module Number")
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  pill_name = models.CharField("Pill Name", max_length=200)
+  module_num = models.IntegerField("Module Number")
+
+  def __str__(self):
+      return self.pill_name
 
 class Schedule(models.Model):
   CATEGORY_CHOICES = (
@@ -54,6 +57,7 @@ class Schedule(models.Model):
 
 class Log(models.Model):
   medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
-  time = models.DateTimeField()
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  created_at = models.DateTimeField(auto_now_add=True)
 
 
