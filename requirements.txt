@@ -29,6 +29,7 @@ python-decouple==3.1
 pytz==2018.3
 redis==2.10.6
 schedule==0.5.0
+simpleaudio==1.0.2
 six==1.11.0
 Twisted==17.9.0
 txaio==2.8.2
