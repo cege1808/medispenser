@@ -70,3 +70,6 @@ local_settings.py
 
 .env
 *.sqlite3
+
+# Audio
+static/sound
