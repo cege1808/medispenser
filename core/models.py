@@ -52,4 +52,8 @@ class Schedule(models.Model):
   counter = models.IntegerField(blank=True, null=True)
   module_nums = models.CharField("Module Number(s)", validators=[validate_comma_separated_integer_list], max_length=250)
 
+class Log(models.Model):
+  medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
+  time = models.DateTimeField()
+
 
