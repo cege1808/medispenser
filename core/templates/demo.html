@@ -14,7 +14,13 @@
 
 {% block body %}
 <h1>Choose one of the colours</h1>
-<button class="btn btn-danger demo-btn" data-colour="red" data-module="0">Red</button>
-<button class="btn btn-warning demo-btn" data-colour="yellow" data-module="1">Yellow</button>
-<button class="btn btn-primary demo-btn" data-colour="blue" data-module="2">Blue</button>
+<div id="drop-btn-cluster">
+  <button class="btn btn-danger demo-btn" data-colour="red" data-module="0">Red</button>
+  <button class="btn btn-warning demo-btn" data-colour="yellow" data-module="1">Yellow</button>
+  <button class="btn btn-primary demo-btn" data-colour="blue" data-module="2">Blue</button>
+</div>
+<div id="demo-notification"></div>
+<div id="reset-btn-cluster">
+  <button class="btn btn-success">Yay!</button>
+</div>
 {% endblock %}

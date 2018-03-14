@@ -25,5 +25,6 @@ def debug_task(self):
 def run_motor(module_nums):
   manager = TaskManager()
   manager.run_instruction(module_nums)
-  return "Successfully drop pill {}".format(module_nums)
+  print("Successfully drop pill {}".format(module_nums))
+  return {"instruction": "run_motor", "success": True, "module_nums": module_nums}
 
