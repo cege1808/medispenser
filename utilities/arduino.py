@@ -87,12 +87,12 @@ class Arduino(Base):
     return self.get_response(instruction)
 
   def wait_button_pressed(self):
-    instruction = '<B>'
+    instruction = '<BT>'
     self.serial.write_line(instruction)
     return self.get_response(instruction)
 
   def alert_and_wait_button_pressed(self):
-    instruction = '<A>'
+    instruction = '<AT>'
     self.serial.write_line(instruction)
     return self.get_response(instruction)
 
@@ -171,7 +171,7 @@ class Arduino(Base):
       self.debug('req: {}, res: {}'.format(req, res))
       if self.verify_valid_response(req, res):
         wait = False
-      time.sleep(1)
+      time.sleep(0.5)
     return (res[3] == 'Y')
 
   def verify_valid_response(self, req, res):

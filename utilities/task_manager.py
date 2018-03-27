@@ -104,27 +104,30 @@ class LoggingDemo(TaskManager):
 
 class ButtonTriggerDemo(TaskManager):
 
-  def __init__(self, module_num=1):
+  def __init__(self, module_num=0):
     super().__init__()
     self.module_num = module_num
+    self.info("module number {}".format(self.module_num))
     self.initialize_pill()
+    self.main_loop()
 
-  def initialize_pill():
+  def initialize_pill(self):
     self.arduino.prepare_and_verify(self.module_num)
 
   def main_loop(self):
     button_pressed = False
     while True:
       if(not button_pressed):
-        self.arduino.wait_button_pressed()
-        button_pressed = True
-      else:
         self.arduino.turn_on_led()
-        self.arduino.drop_pill(module_num)
+        if (self.arduino.wait_button_pressed()):
+          button_pressed = True
+      else:
+        self.arduino.drop_pill(self.module_num)
         self.debug('Pill successfully dropped')
+        self.arduino.turn_off_led()
         self.arduino.prepare_and_verify(self.module_num)
         button_pressed = False
-        self.arduino.turn_off_led()
+
 
 
 if __name__ == '__main__':

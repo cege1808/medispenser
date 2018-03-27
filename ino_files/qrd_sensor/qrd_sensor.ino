@@ -18,7 +18,7 @@ As an object comes closer to the QRD1114, the voltage on A0 should go down.
 Development environment specifics:
 Arduino 1.6.7
 ******************************************************************************/
-const int QRD1114_PIN = A0; // Sensor output voltage
+const int QRD1114_PIN = A3; // Sensor output voltage
 
 void setup() 
 {
