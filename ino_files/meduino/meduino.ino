@@ -10,21 +10,21 @@ const char outbound_end_str = ']';
 const int baudrate = 9600;
 
 // Pin contants
-const int num_of_modules = 3;
-const int motor_driver_pins[3][4] = { {2,3,4,5}, {8,9,10,11}, {6,7,11,12} };
-const int ir_pill_detection_pins[3] = {A0,A2,A4};
-const int ir_encoder_detection_pins[3] = {A3,A1,A7};
-const int button_pin = 13;
-const int led_pin = 12;
+const int num_of_modules = 2;
+const int motor_driver_pins[3][4] = { {2,3,4,5}, {6,7,8,9} };
+const int ir_pill_detection_pins[3] = {A0,A2};
+const int ir_encoder_detection_pins[3] = {A1,A3};
+const int button_pin = 10;
+const int led_pin = 11;
 
 // Motor constants
-const int motor_speed = 2000;
+const int motor_speed = 3000;
 const int motor_lookup[8] = {B01000, B01100, B00100, B00110, B00010, B00011, B00001, B01001};
 const int steps_in_one_rotation = 512;
 
 // IR sensor
 const int ir_pill_sensor_limit = 400;
-const int ir_encoder_sensor_limit = 600;
+const int ir_encoder_sensor_limit = 500;
 
 // States
 char incoming_byte;
@@ -138,6 +138,7 @@ String wait_button_press_instruction(String instruction){
   bool button_pressed = false;
   while(!button_pressed){
     int button_status = digitalRead(button_pin);
+//    Serial.println(button_status);
     if(button_status == 1){
       button_pressed = true;
     }
@@ -200,7 +201,7 @@ String run_verification_instruction(String instruction){
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
   int ir_value = analogRead(ir_pill_detection_pins[module_num]);
-  Serial.println(ir_value);
+//  Serial.println(ir_value);
   if(ir_value < ir_pill_sensor_limit){
     return instruction + 'Y';
   }
@@ -231,7 +232,6 @@ String run_drop_instruction(String instruction){
   // Drop a pill with 1/8 rotation
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
-//  int step_num = steps_in_one_rotation / 8;
 //  int step_num = int(float(40.0 /360.0) * steps_in_one_rotation);
   int step_num = 100;
   rotation(counterclockwise, module_num, step_num);
