@@ -126,7 +126,7 @@ class Arduino(Base):
     self.prepare_drop_pill(module_num)
     self.debug('Pill is prepared')
 
-    for i in range(5):
+    for i in range(3):
       pill_status = self.verify_pill(module_num)
       self.debug('Pill status: {}'.format(pill_status))
 
@@ -138,7 +138,7 @@ class Arduino(Base):
         self.repeat_prepare_drop_pill(module_num)
         self.debug('Pill is prepared (repeated)')
 
-    self.info('Please refill module {}'.format(module_num))
+    raise Exception('Please refill module {}'.format(module_num))
 
 
   def pill_cycle(self, module_num):
