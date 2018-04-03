@@ -82,11 +82,19 @@ class Arduino(Base):
     return self.get_response(instruction)
 
   def blink_led(self):
-    self.debug("blink")
-    self.turn_off_led()
-    self.turn_on_led()
-    time.sleep(1)
-    self.turn_off_led()
+    instruction = '<LB>'
+    self.serial.write_line(instruction)
+    return self.get_response(instruction)
+
+  def wait_button_pressed(self):
+    instruction = '<BT>'
+    self.serial.write_line(instruction)
+    return self.get_response(instruction)
+
+  def alert_and_wait_button_pressed(self):
+    instruction = '<AT>'
+    self.serial.write_line(instruction)
+    return self.get_response(instruction)
 
   def calibrate_motor_pos(self, module_num, current_pos):
     # current_position is num of degrees to the clockwise direction
@@ -113,6 +121,25 @@ class Arduino(Base):
     instruction = '<V{}>'.format(module_num)
     self.serial.write_line(instruction)
     return self.get_response(instruction)
+
+  def prepare_and_verify(self, module_num):
+    self.prepare_drop_pill(module_num)
+    self.debug('Pill is prepared')
+
+    for i in range(3):
+      pill_status = self.verify_pill(module_num)
+      self.debug('Pill status: {}'.format(pill_status))
+
+      if pill_status:
+        self.debug('Pill successfully prepeared')
+        return
+      else:
+        self.info('Arduino did not verify pill, try again')
+        self.repeat_prepare_drop_pill(module_num)
+        self.debug('Pill is prepared (repeated)')
+
+    raise Exception('Please refill module {}'.format(module_num))
+
 
   def pill_cycle(self, module_num):
     if self.prepare_drop_pill(module_num):
@@ -144,7 +171,7 @@ class Arduino(Base):
       self.debug('req: {}, res: {}'.format(req, res))
       if self.verify_valid_response(req, res):
         wait = False
-      time.sleep(1)
+      time.sleep(0.5)
     return (res[3] == 'Y')
 
   def verify_valid_response(self, req, res):

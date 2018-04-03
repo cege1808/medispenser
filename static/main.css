@@ -6,3 +6,15 @@
 .header-height > li > p{
   padding: 8px 20px 0 0;
 }
+
+#progress {
+    width: 100%;
+    background-color: grey;
+}
+#bar {
+    width: 1%;
+    height: 30px;
+    background-color: green;
+    transition-property: width;
+    transition-duration: 1s;
+}

@@ -7,11 +7,14 @@ from django.contrib import messages
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import requires_csrf_token, ensure_csrf_cookie
 from .forms import UserCreateForm, UserEditForm, LoginForm, ProfileForm, MedForm, ScheduleForm
-from .models import Profile, Medication, Schedule
+from .models import Profile, Medication, Schedule, Log
 
 # Create your views here.
 def index(request):
 	return render(request, "index.html")
+
+def about(request):
+	return render(request, "about.html")
 
 def demo(request):
 	return render(request, "demo.html")
@@ -229,5 +232,15 @@ def delete_schedule(request):
 
 	return render(request, 'schedule/delete.html', {'sched': sched_info})
 
+@login_required
+def show_log(request):
+	log_data = list(request.user.log_set.all().order_by('-id'))
+	return render(request, 'log.html', {'log_data': log_data})
+
+@login_required
+def log_add_row(request):
+	start = int(request.GET['displayed_rows'])
+	log_data = list(Log.objects.filter(user=request.user).order_by('id')[start:])
+	return render(request, 'log_add_row.html', {'log_data': log_data})
 
 
