@@ -13,6 +13,9 @@ from .models import Profile, Medication, Schedule, Log
 def index(request):
 	return render(request, "index.html")
 
+def about(request):
+	return render(request, "about.html")
+
 def demo(request):
 	return render(request, "demo.html")
 
