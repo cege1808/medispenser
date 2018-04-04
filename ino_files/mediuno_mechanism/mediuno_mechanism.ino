@@ -10,13 +10,12 @@ const char outbound_end_str = ']';
 const int baudrate = 9600;
 
 // Pin contants
-const int num_of_modules = 2;
-const int motor_driver_pins[3][4] = { {2,3,4,5}, {6,7,8,9} };
-const int ir_pill_detection_pins[3] = {A0,A2};
-const int ir_encoder_detection_pins[3] = {A1,A3};
+const int num_of_modules = 1;
+const int motor_driver_pins[3][4] = { {2,3,4,5} };
+const int ir_pill_detection_pins[3] = {A0};
+const int ir_encoder_detection_pins[3] = {A1};
 const int button_pin = 10;
 const int led_pin = 11;
-const int led_array = 53;
 
 // Motor constants
 const int motor_speed = 3000;
@@ -25,7 +24,7 @@ const int steps_in_one_rotation = 512;
 
 // IR sensor
 const int ir_pill_sensor_limit = 400;
-const int ir_encoder_sensor_limit = 650;
+const int ir_encoder_sensor_limit = 580;
 
 // States
 char incoming_byte;
@@ -36,7 +35,6 @@ void setup() {
   // put your setup code here, to run once:
   initialize_pins();
   Serial.begin(baudrate);
-  digitalWrite(led_pin, HIGH);
 }
 
 void loop() {
@@ -78,8 +76,6 @@ void initialize_pins(){
      pinMode(button_pin, INPUT);
     // Led
      pinMode(led_pin, OUTPUT);
-    // Led array
-     pinMode(led_array, OUTPUT);
   }
 }
 
@@ -185,17 +181,17 @@ String run_led_instruction(String instruction){
   // Turn on/off an led
   if(instruction[1] == 'H'){
     // Led on
-    digitalWrite(led_array, HIGH);
+    digitalWrite(led_pin, HIGH);
   }
   else if(instruction[1] == 'L'){
     // Led off
-    digitalWrite(led_array, LOW);
+    digitalWrite(led_pin, LOW);
   }
   else if(instruction[1] == 'B'){
-    digitalWrite(led_array, LOW);
-    digitalWrite(led_array, HIGH);
+    digitalWrite(led_pin, LOW);
+    digitalWrite(led_pin, HIGH);
     delay(1000);
-    digitalWrite(led_array, LOW);
+    digitalWrite(led_pin, LOW);
   }
   return instruction + 'Y';
 }
@@ -294,11 +290,5 @@ int convert_char_to_int(char c){
   // Only for integers 0-9
   return int(c) - 48;
 }
-
-
-
-
-
-
 
 

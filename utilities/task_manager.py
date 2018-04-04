@@ -85,8 +85,8 @@ class LoggingDemo(TaskManager):
     # db_dict = self.get_schedule(self.username)
 
     db_dict = [
-          {'category': 'second', 'day': None, 'time': None, 'counter': 15, 'module_nums': [0]},
-          {'category': 'second', 'day': None, 'time': None, 'counter': 45, 'module_nums': [1]},
+          # {'category': 'second', 'day': None, 'time': None, 'counter': 15, 'module_nums': [0]},
+          {'category': 'second', 'day': None, 'time': None, 'counter': 30, 'module_nums': [1]},
         ]
     self.setup_scheduler(db_dict)
     self.info(db_dict)
