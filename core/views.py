@@ -144,7 +144,7 @@ def new_medication(request):
 @login_required
 def edit_medication(request):
 	try:
-		med_id = request.GET['med'][0]
+		med_id = request.GET['med']
 		med_info = Medication.objects.get(id=med_id)
 	except Medication.DoesNotExist:
 		messages.error(request, 'Invalid medication!')
@@ -163,7 +163,7 @@ def edit_medication(request):
 @login_required
 def delete_medication(request):
 	try:
-		med_id = request.GET['med'][0]
+		med_id = request.GET['med']
 		med_info = Medication.objects.get(id=med_id)
 	except Medication.DoesNotExist:
 		messages.error(request, 'Invalid medication!')

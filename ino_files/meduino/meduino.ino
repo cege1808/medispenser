@@ -24,8 +24,8 @@ const int motor_lookup[8] = {B01000, B01100, B00100, B00110, B00010, B00011, B00
 const int steps_in_one_rotation = 512;
 
 // IR sensor
-const int ir_pill_sensor_limit = 400;
-const int ir_encoder_sensor_limit = 650;
+const int ir_pill_sensor_limit = 600;
+const int ir_encoder_sensor_limit = 600;
 
 // States
 char incoming_byte;
@@ -205,7 +205,7 @@ String run_verification_instruction(String instruction){
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
   int ir_value = analogRead(ir_pill_detection_pins[module_num]);
-//  Serial.println(ir_value);
+  Serial.println(ir_value);
   if(ir_value < ir_pill_sensor_limit){
     return instruction + 'Y';
   }
@@ -237,7 +237,7 @@ String run_drop_instruction(String instruction){
   char module_char = instruction[1];
   int module_num = convert_char_to_int(module_char);
 //  int step_num = int(float(40.0 /360.0) * steps_in_one_rotation);
-  int step_num = 100;
+  int step_num = 180;
   rotation(counterclockwise, module_num, step_num);
   return instruction + 'Y';
 }
