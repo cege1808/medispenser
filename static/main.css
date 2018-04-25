@@ -18,3 +18,13 @@
     transition-property: width;
     transition-duration: 1s;
 }
+
+.log {
+  color: blue;
+  -webkit-transition: color 50s; /* Safari */
+  transition: color 50s;
+}
+
+.log.black {
+  color: black;
+}

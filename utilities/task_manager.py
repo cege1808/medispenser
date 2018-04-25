@@ -3,6 +3,8 @@ from utilities.arduino import Arduino
 from utilities.scheduler import Scheduler
 import sqlite3
 import simpleaudio as sa
+from twilio.rest import Client
+from decouple import config
 
 
 class TaskManager(Base):
@@ -80,13 +82,17 @@ class LoggingDemo(TaskManager):
 
   def __init__(self):
     super().__init__()
+    self.TWILIO_ACCOUNT = config('TWILIO_ACCOUNT')
+    self.TWILIO_TOKEN = config('TWILIO_TOKEN')
+    self.TWILIO_TO = config('TWILIO_TO')
+    self.TWILIO_FROM = config('TWILIO_FROM')
     self.username = "logging_demo"
-    self.wave_obj = sa.WaveObject.from_wave_file('static/sound/nice_text_reminder.wav')
+    self.wave_obj = sa.WaveObject.from_wave_file('static/sound/jazz_music.wav')
     # db_dict = self.get_schedule(self.username)
 
     db_dict = [
-          {'category': 'second', 'day': None, 'time': None, 'counter': 15, 'module_nums': [0]},
-          {'category': 'second', 'day': None, 'time': None, 'counter': 45, 'module_nums': [1]},
+          {'category': 'second', 'day': None, 'time': None, 'counter': 30, 'module_nums': [1]},
+          {'category': 'second', 'day': None, 'time': None, 'counter': 30, 'module_nums': [0]},
         ]
     self.setup_scheduler(db_dict)
     self.info(db_dict)
@@ -131,6 +137,19 @@ class LoggingDemo(TaskManager):
     conn.close()
     return db_dict
 
+  def get_pill_name(self, username, module_num):
+    sqlite_file = '../medispenser/db.sqlite3'
+    user_table = 'auth_user'
+    medication_table = 'core_medication'
+    conn = sqlite3.connect(sqlite_file)
+    c = conn.cursor()
+    c.execute(self.sql_select_statement("id", user_table, cn="username", query=username))
+    user_id = c.fetchall()[0][0]
+    c.execute(self.sql_select_statement("pill_name", medication_table, cn1="user_id", query1=user_id, cn2="module_num", query2=module_num))
+    pill_name = c.fetchall()[0][0]
+    conn.close()
+    return pill_name
+
   def sql_select_statement(self, col, tn, **params):
     if 'cn' in params:
       cn = params['cn']
@@ -174,6 +193,12 @@ class LoggingDemo(TaskManager):
     self.arduino.prepare_and_verify(0)
     self.arduino.prepare_and_verify(1)
 
+  def send_sms(self, medication_name):
+    if self.TWILIO_ACCOUNT and self.TWILIO_TOKEN and self.TWILIO_TO and self.TWILIO_FROM:
+      client = Client(self.TWILIO_ACCOUNT, self.TWILIO_TOKEN)
+      text_body = "\nHi {caretaker_name}, \n{client_name} has taken their {medication_name} medication".format(caretaker_name='Jeeves', client_name="Wooster", medication_name=medication_name)
+      message = client.messages.create(to=self.TWILIO_TO, from_=self.TWILIO_FROM, body=text_body)
+
   def main_loop(self):
     try:
       button_pressed = False
@@ -189,12 +214,14 @@ class LoggingDemo(TaskManager):
               if self.play_obj.is_playing():
                 self.play_obj.stop()
           else:
-            self.arduino.turn_off_led()
-
             for module_num in self.instruction_queue[0]:
               self.arduino.drop_pill(module_num)
               self.debug('Pill successfully dropped')
               self.save_log(self.username, module_num)
+              pill_name = self.get_pill_name(self.username, module_num)
+              self.send_sms(pill_name)
+
+              self.arduino.turn_off_led()
               self.arduino.prepare_and_verify(module_num)
 
             self.remove_nth_instruction(0)

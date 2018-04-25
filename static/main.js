@@ -65,6 +65,9 @@ $(function(){
       success: function(response){
         if(response){
           $("#medication-log tbody").prepend(response);
+          setTimeout(function(){
+            $("#medication-log tbody").children('tr').first().addClass("black")
+          }, 1000)
         }
       },
       error: function(response, status, error){
