@@ -1,5 +1,9 @@
 # Medispenser
 
+![Final Product](static/image/full_cad.png)
+![Live Product](static/image/live.png)
+![Mechanical Parts](static/image/mechanical_parts.png)
+
 ## Install Python3
 ```
 brew install python3
